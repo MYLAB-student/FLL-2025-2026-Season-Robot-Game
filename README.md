@@ -7,11 +7,79 @@
 ```
 名称未設定フォルダ/
 ├── README.md              # このファイル
-├── setup.py              # ロボット初期化モジュール
-├── run.py                # 基本動作関数
 ├── selecter.py           # プログラム選択・実行インターフェース
-└── straight_test.py      # 直進・回転テストプログラム
+    ├── setup.py              # ロボット初期化モジュール
+    ├── run1.py                # ランごとに作る実行ファイル
+    ├── run2.py                
+    ├── run3.py                
+    └── straight_test.py      # 直進・回転テスト用プログラム
+
+
 ```
+###  ⚡ 開発時の
+
+- 新しいランを作るときは、「run●.py」をつくって、selecter.pyにインポートする
+
+
+
+### ⚡ 競技時の操作方法
+
+1) ハードウェア接続
+- Port F: 左モーター（反時計回り）
+- Port B: 右モーター（時計回り）
+- Port C: フォースセンサー（選択/実行用）
+
+
+2) 操作
+
+#### スタート時
+
+hubのメインボタンを長押しして起動し、実行するファイルの番号を選択して、フォースセンサーを押して実行
+
+- LEFT: 前のプログラム
+- RIGHT: 次のプログラム
+- フォースセンサー（C）: 選択したプログラムを実行
+
+4) 最短でミッションを1件登録（`selecter.py` の `programs` に追記）
+
+```python
+{"name": "M01 直進100mm(50%)", "module": run, "description": "M01 直進テスト", "function": "straight_with_power", "params": [robot, 100, 50]}
+```
+
+5) 新しいファイルでミッションを定義して登録
+- 例: `missions_gemini_2_5_pro.py`を作成
+
+```python
+# missions_gemini_2_5_pro.py
+from pybricks.tools import wait
+
+def m01_bridge(robot, hub):
+    #ここに処理を書く
+    robot.settings()
+    robot.straight(200)
+    wait(200)
+```
+
+- `selecter.py` にインポートして登録
+
+```python
+import missions_gemini_2_5_pro
+
+programs += [
+    {"name": "M01 ブリッジ", "module": missions_gemini_2_5_pro, "description": "M01: 橋アプローチ", "function": "m01_bridge", "params": [robot, hub]},
+]
+```
+
+
+ヒント
+- 必須キー: `name`, `module`, `description`, `function`
+- 多くの関数は `robot`/`hub` を使うため `params` で渡す
+- 括弧入りファイル名は通常の `import` ができないため、必要なら本文の `importlib` 例を利用
+
+7) 書き込み後は本体のみで動作します（オフライン実行）
+- Pybricks App から `selecter.py` をメインとしてハブに「ダウンロード（保存）」してください
+- 以後は PC 接続なしで、ハブの電源を入れて中央ボタンからプログラムを起動できます
+- 本プロジェクトのセレクターは、ハブの左右ボタン／フォースセンサーで選択・実行できます
 
 ## 🚀 機能
 
@@ -22,10 +90,6 @@
 - **センサーログ**: リアルタイムでのセンサー値表示
 - **非同期処理**: 複数タスクの並行実行
 
-### 動作関数
-- `straight_with_power()`: 指定した出力で直進
-- `turn_with_power()`: 指定した出力で回転
-- `sensor_logger_task()`: センサー値の継続ログ出力
 
 ## 🔧 セットアップ
 
@@ -66,34 +130,7 @@ hub, left, right, robot = initialize_robot(
 )
 ```
 
-#### 1.2 基本動作の実行
-```python
-from run import straight_with_power, turn_with_power
 
-# 直進動作
-straight_with_power(robot, 100, 50)   # 100mm直進、出力50%
-straight_with_power(robot, 200, 100)  # 200mm直進、最大出力
-straight_with_power(robot, 50, 20)    # 50mm直進、低出力
-
-# 回転動作
-turn_with_power(robot, hub, 90, 30)   # 90度右回転、出力30%
-turn_with_power(robot, hub, 180, 50)  # 180度回転、出力50%
-turn_with_power(robot, hub, 360, 10)  # 360度回転、低出力
-```
-
-#### 1.3 連続動作の実行
-```python
-# 複数の動作を連続実行
-def run_sequence():
-    # 正方形を描く
-    for i in range(4):
-        straight_with_power(robot, 100, 60)  # 100mm直進
-        turn_with_power(robot, hub, 90, 40)  # 90度回転
-        wait(500)  # 0.5秒待機
-
-# 実行
-run_sequence()
-```
 
 ### 2. プログラム選択モード
 
@@ -128,6 +165,157 @@ programs = [
 {"name": "カスタム動作", "module": run, "function": "custom_function", "params": [robot, hub, parameter]}
 ```
 
+#### 2.5 新しいファイルを作ってセレクターに登録する
+
+新しい動作を別ファイルに切り出して管理したい場合の手順です。
+
+- **ファイル名のルール（重要）**: Pythonでインポートできるように、英数字とアンダースコアのみを使用してください。
+  - 例: `my_actions_gemini_2_5_pro.py`（括弧やハイフンは使わない）
+
+1) 新しいファイルを作成（例: `my_actions_gemini_2_5_pro.py`）
+
+```python
+"""Generated with Gemini-2.5-pro"""
+
+from pybricks.tools import wait
+
+def straight_slow(robot, distance_mm: int, motor_power: int):
+    robot.settings(straight_speed=abs(motor_power) * 5)
+    robot.straight(distance_mm)
+    wait(100)
+
+def turn_and_go(robot, hub, angle_deg: int, distance_mm: int, motor_power: int):
+    robot.settings(turn_rate=abs(motor_power) * 5)
+    robot.turn(angle_deg)
+    hub.imu.reset_heading(0)
+    robot.settings(straight_speed=abs(motor_power) * 5)
+    robot.straight(distance_mm)
+```
+
+2) `selecter.py` に新ファイルをインポート
+
+```python
+# ファイル先頭付近に追記
+import my_actions_gemini_2_5_pro as my_actions
+```
+
+補足: ファイル名にモデル名を括弧付きで含めたい場合
+
+- 例: `my_actions（Gemini-2.5-pro）.py` のように括弧やハイフンを含むと、`import my_actions（...）` のような通常のインポートはできません。
+- この場合は `importlib` を使ってファイルパスから読み込みます（下記例ではモジュール名を `my_actions` に割り当て）。
+
+```python
+import importlib.util, sys
+
+module_path = "my_actions（Gemini-2.5-pro）.py"
+spec = importlib.util.spec_from_file_location("my_actions", module_path)
+my_actions = importlib.util.module_from_spec(spec)
+sys.modules["my_actions"] = my_actions
+spec.loader.exec_module(my_actions)
+```
+
+3) `selecter.py` の `programs` リストに登録
+
+```python
+programs = [
+    # 既存エントリ...
+    {"name": "低速直進(新ファイル)", "module": my_actions, "description": "新ファイル: 低速直進", "function": "straight_slow", "params": [robot, 120, 20]},
+    {"name": "回転→前進(新ファイル)", "module": my_actions, "description": "新ファイル: 回転後に前進", "function": "turn_and_go", "params": [robot, hub, 90, 150, 40]},
+]
+```
+
+4) 実行して確認
+
+```bash
+python selecter.py
+```
+
+5) うまくいかない場合
+- **ModuleNotFoundError**: ファイル名とインポート名が一致しているか（拡張子 `.py` を除いた名前）を確認
+- **TypeError**: `params` の順番・個数が関数定義と一致しているか確認
+- **NameError**: `module` に指定したオブジェクト名（例: `my_actions`）を正しくインポートしているか確認
+
+#### 2.6 プログラムリストのフォーマット
+
+`selecter.py` の `programs` は、以下の辞書要素のリストです。
+
+```python
+# programs リストの各要素フォーマット（必須/任意）
+{
+    "name": "表示名",                 # 必須: str（ハブ表示・ログ用）
+    "module": run,                   # 必須: モジュールオブジェクト（例: run, my_actions）
+    "description": "説明文",         # 必須: str（ターミナル表示）
+    "function": "関数名",             # 必須: str（module 内に存在する関数名）
+    "params": [robot, hub, 100, 50], # 任意: list（関数に渡す引数。順序は関数定義に合わせる）
+}
+```
+
+- **必須キー**: `name`, `module`, `description`, `function`
+  - `description` は `selecter.py` の出力で必ず参照されるため省略不可
+- **任意キー**: `params`
+  - 省略した場合は、引数なしで関数が呼ばれます
+  - 多くの関数は `robot` や `hub` を必要とするため、通常は指定します
+
+例1: 引数あり
+
+```python
+{"name": "直進(100mm,50%)", "module": run, "description": "直進テスト", "function": "straight_with_power", "params": [robot, 100, 50]}
+```
+
+例2: 引数なし（関数側が引数不要な場合）
+
+```python
+{"name": "初期化のみ", "module": run, "description": "引数なし関数の例", "function": "init_only"}
+```
+#### 2.7 登録される側のプログラムの書き方
+
+セレクターに登録する関数は「通常の同期関数」を想定しています。以下の指針に従って作成してください。
+
+- **同期関数で書く**: `def ...`（`async def`は不可）
+- **初期化はしない**: `initialize_robot()` を呼ばず、`robot` や `hub` は引数で受け取る
+- **戻り値は不要**: `None` でOK
+- **例外処理**: 上位で捕捉されるため、そのまま例外を投げてもOK（安全停止が必要なら関数内で `robot.stop()` などを実施）
+
+推奨シグネチャ（例）
+
+```python
+# my_actions_gemini_2_5_pro.py
+from pybricks.tools import wait
+
+def go_and_turn(robot, hub, distance_mm: int, angle_deg: int, power: int) -> None:
+    """指定距離直進→指定角度回転"""
+    robot.settings(straight_speed=abs(power) * 5)
+    robot.straight(distance_mm)
+    wait(100)
+    robot.settings(turn_rate=abs(power) * 5)
+    robot.turn(angle_deg)
+    hub.imu.reset_heading(0)
+```
+
+モーター等の追加デバイスが必要な場合は、引数として受け取ってください。
+
+```python
+from pybricks.pupdevices import Motor
+
+def lift_and_move(robot, lift_motor: Motor, up_deg: int, distance_mm: int, power: int) -> None:
+    lift_motor.run_target(speed=200, target_angle=up_deg)
+    robot.settings(straight_speed=abs(power) * 5)
+    robot.straight(distance_mm)
+```
+
+登録例（`selecter.py` の `programs`）
+
+```python
+{"name": "進む→回る", "module": my_actions, "description": "直進後に回転", "function": "go_and_turn", "params": [robot, hub, 150, 90, 40]}
+{"name": "持ち上げ→前進", "module": my_actions, "description": "リフト後に前進", "function": "lift_and_move", "params": [robot, lift, 90, 200, 30]}
+```
+
+注意点
+- `wait()` を適宜入れて機体保護と安定動作を確保
+- `selecter.py` 側で実行前後に `reset_robot()` が呼ばれる前提のため、関数内で再初期化しない
+- 長時間の無限ループなどは避け、1回の呼び出しで完了する処理にまとめる
+
+
 ### 3. テスト実行
 
 #### 3.1 直進・回転テスト
@@ -142,18 +330,70 @@ python straight_test.py
 - 100度回転（出力100%）
 - 360度回転（出力10%）
 
-#### 3.2 センサーログの確認
+
+#### 3.2 精度テスト（straight_with_power / turn_with_power）
+
+直進距離と回転角度の精度を測定するための簡易テストです。下記を新規ファイルとして保存して実行できます。
+
+- 推奨ファイル名: `accuracy_test_gemini_2_5_pro.py`
+
 ```python
-# リアルタイムでセンサー値を確認
-async def sensor_logger_task():
-    while True:
-        heading = hub.imu.heading()
-        left_deg = left.angle()
-        right_deg = right.angle()
-        dist = robot.distance()
-        print(f"LOG: dist={dist:4.0f} mm  heading={heading:4.0f}°  L={left_deg:5.0f}°  R={right_deg:5.0f}°")
-        await wait(200)
+from pybricks.tools import wait
+from setup import initialize_robot
+from run import straight_with_power, turn_with_power
+
+
+def straight_accuracy_test(robot, target_mm: int = 100, power: int = 50, trials: int = 5) -> None:
+    """直進精度を trials 回測定して誤差を表示"""
+    errors = []
+    for i in range(trials):
+        robot.reset()
+        straight_with_power(robot, target_mm, power)
+        actual = robot.distance()
+        error = actual - target_mm
+        errors.append(error)
+        print(f"[Straight #{i+1}] target={target_mm}mm actual={actual:.1f}mm error={error:+.1f}mm")
+        wait(200)
+
+    avg_error = sum(errors) / len(errors)
+    avg_abs_error = sum(abs(e) for e in errors) / len(errors)
+    print(f"AVG error={avg_error:+.1f}mm, AVG |error|={avg_abs_error:.1f}mm")
+
+
+def turn_accuracy_test(robot, hub, target_deg: int = 90, power: int = 30, trials: int = 5) -> None:
+    """回転精度を trials 回測定して誤差を表示"""
+    errors = []
+    for i in range(trials):
+        hub.imu.reset_heading(0)
+        turn_with_power(robot, hub, target_deg, power)
+        actual = hub.imu.heading()
+        error = actual - target_deg
+        errors.append(error)
+        print(f"[Turn #{i+1}] target={target_deg}° actual={actual:.1f}° error={error:+.1f}°")
+        wait(200)
+
+    avg_error = sum(errors) / len(errors)
+    avg_abs_error = sum(abs(e) for e in errors) / len(errors)
+    print(f"AVG error={avg_error:+.1f}°, AVG |error|={avg_abs_error:.1f}°")
+
+
+if __name__ == "__main__":
+    hub, left, right, robot = initialize_robot()
+
+    # 直進の精度テスト（例: 100mm を出力50%で5回）
+    straight_accuracy_test(robot, target_mm=100, power=50, trials=5)
+
+    # 回転の精度テスト（例: 90° を出力30%で5回）
+    turn_accuracy_test(robot, hub, target_deg=90, power=30, trials=5)
 ```
+
+調整のヒント
+- **タイヤ/車軸のパラメータ**: `setup.py` の `setup_robot_parameters()` で `wheel_diameter`（タイヤ径）と `axle_track`（車軸間距離）を実測に合わせて調整すると直進/旋回精度が向上します。
+- **PID ゲイン**: `setup.py` の `setup_pid_control()` 内の `DISTANCE_*` と `HEADING_*` を段階的に調整。
+- **実行条件**: 平坦な路面・安定したバッテリー・ケーブル干渉無しで測定。
+- **パワー設定**: 高すぎる出力はオーバーシュートを招く場合あり。まずは 20–50% から。
+
+
 
 ### 4. 非同期処理の活用
 
@@ -234,28 +474,7 @@ def safe_robot_operation():
         print("ロボットをリセットしました")
 ```
 
-#### 5.3 パフォーマンステスト
-```python
-def performance_test():
-    """ロボットの性能テスト"""
-    print("=== 性能テスト開始 ===")
-    
-    # 直進精度テスト
-    print("1. 直進精度テスト")
-    robot.reset()
-    straight_with_power(robot, 100, 50)
-    actual_distance = robot.distance()
-    print(f"目標距離: 100mm, 実際の距離: {actual_distance}mm")
-    
-    # 回転精度テスト
-    print("2. 回転精度テスト")
-    hub.imu.reset_heading(0)
-    turn_with_power(robot, hub, 90, 30)
-    actual_heading = hub.imu.heading()
-    print(f"目標角度: 90°, 実際の角度: {actual_heading}°")
-    
-    print("=== 性能テスト完了 ===")
-```
+
 
 ## ⚙️ 設定パラメータ
 
@@ -327,15 +546,3 @@ def custom_action(robot, parameter):
 2. 各ステップで`print()`文を追加
 3. エラーメッセージを確認
 
-## 📝 ライセンス
-
-このプロジェクトは教育目的で作成されています。
-
-## 🤝 貢献
-
-バグ報告や機能改善の提案は歓迎します。
-
----
-
-**作成者**: AI Assistant (Gemini-2.5-pro)  
-**最終更新**: 2024年 

@@ -5,16 +5,18 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import wait, multitask, run_task
 from setup import initialize_robot
 import run
+import run1
 
 # ロボットの初期化
-hub, left, right, robot = initialize_robot()
+hub, left, right, robot,lift = initialize_robot()
 
 # プログラムリスト
 programs = [
-   
+    
     {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
      {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
      {"name": "回転", "module": run, "description": "回転", "function": "turn_with_power", "params": [robot,hub,100, 10]},
+     {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [robot,hub,left,right,lift]},
     # 他のプログラムをここに追加
 ]
 

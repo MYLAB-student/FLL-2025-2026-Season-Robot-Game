@@ -11,7 +11,8 @@ def setup_motors():
     """モーターの設定と初期化"""
     left = Motor(Port.F, positive_direction=Direction.COUNTERCLOCKWISE)
     right = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
-    return left, right
+    lift = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
+    return left, right,lift
 
 def setup_robot_parameters(left, right, straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100):
     """ロボットのパラメータ設定"""
@@ -83,7 +84,7 @@ def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_pow
     print("✓ ハブ設定完了")
     
     # モーターの設定
-    left, right = setup_motors()
+    left, right ,lift= setup_motors()
     print("✓ モーター設定完了")
     
     # ロボットパラメータの設定
@@ -100,4 +101,4 @@ def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_pow
     
     print("=== ロボット初期化完了 ===")
     
-    return hub, left, right, robot 
+    return hub, left, right, robot ,lift
