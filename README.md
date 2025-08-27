@@ -2,6 +2,22 @@
 
 このプロジェクトは、LEGO SPIKE PrimeロボットをPybricksを使用して制御するためのPythonプログラム群です。
 
+## 📑 目次
+
+- [📁 プロジェクト構成](#-プロジェクト構成)
+- [⚡ 開発時の流れ](#-開発時の流れ)
+  - [新しいランファイルの作成手順](#新しいランファイルの作成手順)
+  - [selector.pyでの登録手順](#selectorpyでの登録手順)
+- [⚡ 競技時の操作方法](#-競技時の操作方法)
+- [🚀 機能](#-機能)
+- [🔧 セットアップ](#-セットアップ)
+- [📖 使用方法](#-使用方法)
+- [⚙️ 設定パラメータ](#️-設定パラメータ)
+- [🔍 センサー情報](#-センサー情報)
+- [🛠️ カスタマイズ](#️-カスタマイズ)
+- [⚠️ 注意事項](#️-注意事項)
+- [🐛 トラブルシューティング](#-トラブルシューティング)
+
 ## 📁 プロジェクト構成
 
 ```
@@ -16,9 +32,86 @@
 
 
 ```
-###  ⚡ 開発時の
+## ⚡ 開発時の流れ
 
-- 新しいランを作るときは、「run●.py」をつくって、selecter.pyにインポートする
+### 新しいランファイルの作成手順
+
+1. **ファイル名の決定**
+   - `run●.py`の形式で作成（●は数字）
+   - 例: `run2.py`, `run3.py`, `run4.py`など
+
+2. **新しいrunファイルの作成**
+   ```python
+   # run2.py（例）
+   from pybricks.hubs import PrimeHub
+   from pybricks.parameters import Port, Axis, Direction
+   from pybricks.pupdevices import Motor
+   from pybricks.robotics import DriveBase
+   from pybricks.tools import wait, multitask, run_task
+   from setup import initialize_robot
+
+   def run2(robot, hub, left, right, lift):
+       """run2のミッション実行関数
+       
+       Args:
+           robot: DriveBaseオブジェクト
+           hub: PrimeHubオブジェクト  
+           left: 左モーターオブジェクト
+           right: 右モーターオブジェクト
+           lift: リフトモーターオブジェクト
+       """
+       # ここにミッションの動作を記述
+       robot.straight(200)  # 200mm直進
+       robot.turn(90)       # 90度回転
+       wait(500)           # 0.5秒待機
+   ```
+
+3. **ファイルの保存**
+   - プロジェクトルートディレクトリに保存
+   - 文字エンコーディングはUTF-8で保存
+
+### selector.pyでの登録手順
+
+1. **新しいrunファイルのインポート**
+   ```python
+   # selecter.pyの上部にインポート文を追加
+   import run
+   import run1
+   import run2  # 新しく追加
+   ```
+
+2. **programsリストへの追加**
+   ```python
+   # selecter.pyのprogramsリストに新しいエントリを追加
+   programs = [
+       {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
+       {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
+       {"name": "回転", "module": run, "description": "回転", "function": "turn_with_power", "params": [robot,hub,100, 10]},
+       {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [robot,hub,left,right,lift]},
+       {"name": "run2", "module": run2, "description": "run2関数", "function": "run2", "params": [robot,hub,left,right,lift]},  # 新しく追加
+       # 他のプログラムをここに追加
+   ]
+   ```
+
+3. **プログラムエントリの構成要素**
+   - `name`: セレクター表示名（短くわかりやすく）
+   - `module`: インポートしたモジュール名
+   - `description`: 詳細説明（ターミナル表示用）
+   - `function`: 実行する関数名（文字列）
+   - `params`: 関数に渡すパラメータのリスト
+
+4. **動作確認**
+   - selecter.pyを実行してプログラムリストに表示されることを確認
+   - ハブのボタンで選択し、フォースセンサーで実行テスト
+
+5. **ハブへの書き込み**
+   - Pybricks Appからselecter.pyをメインとしてハブにダウンロード
+   - オフライン実行が可能になる
+
+### 注意点
+- runファイルの関数は必ず`robot, hub, left, right, lift`の5つの引数を受け取る形式にする
+- インポート順序はselecter.pyで参照する順番に合わせる
+- プログラム名は重複しないよう注意する
 
 
 

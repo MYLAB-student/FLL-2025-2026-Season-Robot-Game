@@ -9,12 +9,13 @@ def setup_hub():
 
 def setup_motors():
     """モーターの設定と初期化"""
-    left = Motor(Port.F, positive_direction=Direction.COUNTERCLOCKWISE)
-    right = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
-    lift = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
-    return left, right,lift
+    left_wheel = Motor(Port.F, positive_direction=Direction.COUNTERCLOCKWISE)
+    right_wheel = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
+    left_lift = Motor(Port.E, positive_direction=Direction.CLOCKWISE)
+    right_lift = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
+    return left_wheel, right_wheel,left_lift,right_lift
 
-def setup_robot_parameters(left, right, straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100):
+def setup_robot_parameters(left_wheel, right_wheel, straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100):
     """ロボットのパラメータ設定"""
     # 速度設定（パーセンテージで指定）
     straight_rate = straight_speed_percent          # 直進速度の最大値に対する割合
@@ -27,8 +28,8 @@ def setup_robot_parameters(left, right, straight_speed_percent=40, turn_speed_pe
 
     # ロボットパラメータ（実測に合わせると直進精度↑）
     robot = DriveBase(
-                    left, 
-                    right, 
+                    left_wheel, 
+                    right_wheel, 
                     wheel_diameter=56, 
                     axle_track=115   
     )
@@ -40,8 +41,8 @@ def setup_robot_parameters(left, right, straight_speed_percent=40, turn_speed_pe
     
     # モーターパワーの設定
     motor_power = motor_power_percent / 100.0
-    left.dc(motor_power)
-    right.dc(motor_power)
+    left_wheel.dc(motor_power)
+    right_wheel.dc(motor_power)
     
     return robot
 
@@ -84,11 +85,11 @@ def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_pow
     print("✓ ハブ設定完了")
     
     # モーターの設定
-    left, right ,lift= setup_motors()
+    left_wheel, right_wheel,left_lift,right_lift= setup_motors()
     print("✓ モーター設定完了")
     
     # ロボットパラメータの設定
-    robot = setup_robot_parameters(left, right, straight_speed_percent, turn_speed_percent, motor_power_percent)
+    robot = setup_robot_parameters(left_wheel, right_wheel, straight_speed_percent, turn_speed_percent, motor_power_percent)
     print("✓ ロボットパラメータ設定完了")
     
     # PID制御の設定
@@ -101,4 +102,4 @@ def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_pow
     
     print("=== ロボット初期化完了 ===")
     
-    return hub, left, right, robot ,lift
+    return hub ,robot, left_wheel, right_wheel,left_lift,right_lift
