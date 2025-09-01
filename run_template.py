@@ -5,16 +5,15 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import wait, multitask, run_task
 from setup import initialize_robot
 
+
 async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 #######################################
     # ここにロボットの動作を記述してください
-    await left_lift.run_angle(200, 360)
-    await robot.straight(300)
-    await robot.turn(90)
-    left_lift.run_angle(200, 360)
-    await robot.arc(150, 90)
+
+    pass  # 何も実行しない場合の構文エラー回避
     
 ##########################################
+
 
 
 async def sensor_logger_task():

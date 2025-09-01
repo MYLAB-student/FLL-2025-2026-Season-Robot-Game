@@ -15,12 +15,9 @@ hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
 
 # プログラムリスト
 programs = [
-    
-    {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
-     {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
-     {"name": "回転", "module": run, "description": "回転", "function": "turn_with_power", "params": [robot,hub,100, 10]},
-     {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [hub ,robot, left_wheel, right_wheel,left_lift,right_lift]},
-     {"name": "run1", "module": run_sample, "description": "run1関数", "function": "run1", "params": [hub ,robot, left_wheel, right_wheel,left_lift,right_lift]},
+
+     {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", },
+     {"name": "run1", "module": run_sample, "description": "run1関数", "function": "run1" ,}
     # 他のプログラムをここに追加
 ]
 
@@ -99,9 +96,9 @@ async def selecter_task():
 
                 # パラメータがある場合は渡す
                 if 'params' in current_program:
-                    await function(*current_program['params'])
+                    await function(*current_program['params'],hub ,robot, left_wheel, right_wheel,left_lift,right_lift)
                 else:
-                    await function()
+                    await function(hub ,robot, left_wheel, right_wheel,left_lift,right_lift)
 
                 print(f"=== プログラム {program_id} 実行完了 ===")
 

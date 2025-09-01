@@ -1,4 +1,4 @@
-# LEGO SPIKE Prime ロボット制御プログラム（Gemini-2.5-pro）
+# LEGO SPIKE Prime ロボット制御プログラム（Claude-3.5-Sonnet）
 
 このプロジェクトは、LEGO SPIKE PrimeロボットをPybricksを使用して制御するためのPythonプログラム群です。
 
@@ -6,6 +6,7 @@
 
 - [📁 プロジェクト構成](#-プロジェクト構成)
 - [⚡ 開発時の流れ](#-開発時の流れ)
+  - [新しいミッションファイルの作成方法（run_template.py使用）](#新しいミッションファイルの作成方法run_templatepy使用)
   - [新しいランファイルの作成手順](#新しいランファイルの作成手順)
   - [ローバー・アーム操作の詳細例](#ローバーアーム操作の詳細例)
     - [🚗 単純な操作](#-単純な操作)
@@ -27,17 +28,18 @@
 ## 📁 プロジェクト構成
 
 ```
-名称未設定フォルダ/
+FLL-2025-2026-Season/
 ├── README.md              # このファイル
-├── selecter.py           # プログラム選択・実行インターフェース
-    ├── setup.py              # ロボット初期化モジュール
-    ├── run1.py                # ランごとに作る実行ファイル
-    ├── run2.py                
-    ├── run3.py                
-    └── straight_test.py      # 直進・回転テスト用プログラム
-
-
+├── selecter.py           # プログラム選択・実行インターフェース（競技用）
+├── selecter_dev.py       # プログラム選択・実行インターフェース（開発用・ログ機能付き）
+├── setup.py              # ロボット初期化モジュール
+├── run_template.py       # 新しいミッションファイル作成用テンプレート
+├── run.py                # 基本動作関数集
+├── run1.py               # ミッション実行ファイル例
+├── run_sample.py         # サンプルミッション
+└── straight_test.py      # 直進・回転テスト用プログラム
 ```
+
 ## ⚡ 開発時の流れ
 
 ### 新しいミッションファイルの作成方法（run_template.py使用）
@@ -48,74 +50,9 @@
 
 `run_template.py`は新しいミッションファイル作成のためのテンプレートファイルです。
 
-ランを増やすときには、`run_template.py`をコピーして、「# ここにロボットの動作を記述してください」のパートを編集します。
-
-
-#### ロボットを動かすサンプルコード
-
-    # 以下は基本的なロボット動作の例です。必要に応じてコメントアウトを解除して使用してください
-
-
-    # 【awaitについて】
-    # await = 動作が完了するまで待機（順次実行）　
-    # 以下の例では、直進が終わるまでアームは上がらない
-    await robot.straight(300)　
-    await left_lift.run_angle(200, 360)
-     
-    # awaitなし = 動作を開始してすぐ次の処理へ（並行実行）
-    # 以下の例では、直進とアームの動作が同時に行われる
-    robot.straight(300)
-    await left_lift.run_angle(200, 360)
-
-
-    # 動作速度の設定: robot.settingsで直進・回転速度を調整
-    # 初期値    straight_speed=200　→　40% of 500 mm/s、 turn_rate=150　→　30% of 500 deg/s    
-     
-    # 直進速度を200mm/sに設定して前進
-    robot.settings(straight_speed=200)  # 直進200mm/s
-    await robot.straight(300)　# 300mm前進
-     
-    # 回転速度を100deg/sに設定して回転
-    robot.settings(turn_rate=100)  # 回転100deg/s    
-    await robot.turn(90) 90度右回転
-     
-    # 前進速度を400mm/s、回転速度を200deg/sに設定して実行
-    robot.settings(straight_speed=400, turn_rate=200)  # 前進速度と回転速度を設定
-    await robot.straight(300)　# 300mm前進
-    await robot.turn(90) # 90度右回転
-
-
-    # 直進移動: 300mm前進（非同期実行）
-    await robot.straight(300)　# 300mm前進
-    await robot.straight(-300)　# 300mm後進
-
-
-    # 回転動作: その場で90度右回転（非同期実行）
-    await robot.turn(90) # 90度右回転
-
-
-    # カーブ移動: 半径150mmで90度カーブ（非同期実行）
-    await robot.curve(150, 90)
-    
-
-    # リフト操作: 左リフトを速度200で360度回転（非同期実行）
-    await left_lift.run_angle(200, 360)
-
-
-    # リフト操作: 左リフトを速度200で360度回転（同期実行・awaitなし）
-    left_lift.run_angle(200, 360)
-
-    # 前進を始めて1秒後にアームを上げる（並行実行）
-    robot.settings(straight_speed=200, turn_rate=150) # 直進速度と回転速度を設定
-    robot.straight(500, wait=False)  # 500mm前進開始（すぐに次の処理へ）
-    await wait(1000)  # 1秒待つ
-    await left_lift.run_angle(300, 180)  # 左アームを上げる
-
-
-
-
 **特徴:**
-- シンプルな基本構造でカスタマイズしやすい
+- 基本的なロボット動作のサンプルコード（コメントアウト済み）
+- 詳細なコメント付きで動作の理解がしやすい
 - センサーログ機能付き
 - 非同期処理対応
 - そのまま実行可能
@@ -132,6 +69,24 @@ from setup import initialize_robot
 
 async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
     # ここにロボットの動作を記述してください
+    # === サンプル動作コード（参考例）===
+    # 以下は基本的なロボット動作の例です。必要に応じてコメントアウトを解除して使用してください
+    
+    # リフト操作: 左リフトを速度200で360度回転（非同期実行）
+    # await left_lift.run_angle(200, 360)
+    
+    # 直進移動: 300mm前進（非同期実行）
+    # await robot.straight(300)
+    
+    # 回転動作: その場で90度右回転（非同期実行）
+    # await robot.turn(90)
+    
+    # リフト操作: 左リフトを速度200で360度回転（同期実行・awaitなし）
+    # left_lift.run_angle(200, 360)
+    
+    # カーブ移動: 半径150mmで90度カーブ（非同期実行）
+    # 注意: robot.arc()は廃止されました。robot.curve()を使用してください
+    # await robot.curve(150, 90)
     pass  # 何も実行しない場合の構文エラー回避
 
 # センサーログ機能とメイン実行機能を含む
@@ -148,7 +103,7 @@ async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
 2. **run関数の編集**
    ```python
    # mission01（Claude-3.5-Sonnet）.py
-   async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
+   async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
        """ミッション1: ブロック運搬"""
        # ここにミッション固有の動作を記述
        
@@ -551,8 +506,8 @@ def mission_complete_example(hub, robot, left_wheel, right_wheel, left_lift, rig
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
        {"name": "回転", "module": run, "description": "回転", "function": "turn_with_power", "params": [robot,hub,100, 10]},
-       {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [robot,hub,left,right,lift]},
-       {"name": "run2", "module": run2, "description": "run2関数", "function": "run2", "params": [robot,hub,left,right,lift]},  # 新しく追加
+       {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]},
+       {"name": "run2", "module": run2, "description": "run2関数", "function": "run2", "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]},  # 新しく追加
        # 他のプログラムをここに追加
    ]
    ```
@@ -727,8 +682,10 @@ programs = [
 ### ⚡ 競技時の操作方法
 
 1) ハードウェア接続
-- Port F: 左モーター（反時計回り）
-- Port B: 右モーター（時計回り）
+- Port F: 左ホイールモーター（反時計回り）
+- Port B: 右ホイールモーター（時計回り）
+- Port E: 左リフトモーター（時計回り）
+- Port A: 右リフトモーター（時計回り）
 - Port C: フォースセンサー（選択/実行用）
 
 
@@ -749,10 +706,10 @@ hubのメインボタンを長押しして起動し、実行するファイル�
 ```
 
 5) 新しいファイルでミッションを定義して登録
-- 例: `missions_gemini_2_5_pro.py`を作成
+- 例: `missions_claude_3_5_sonnet.py`を作成
 
 ```python
-# missions_gemini_2_5_pro.py
+# missions_claude_3_5_sonnet.py
 from pybricks.tools import wait
 
 def m01_bridge(robot, hub):
@@ -765,10 +722,10 @@ def m01_bridge(robot, hub):
 - `selecter.py` にインポートして登録
 
 ```python
-import missions_gemini_2_5_pro
+import missions_claude_3_5_sonnet
 
 programs += [
-    {"name": "M01 ブリッジ", "module": missions_gemini_2_5_pro, "description": "M01: 橋アプローチ", "function": "m01_bridge", "params": [robot, hub]},
+    {"name": "M01 ブリッジ", "module": missions_claude_3_5_sonnet, "description": "M01: 橋アプローチ", "function": "m01_bridge", "params": [robot, hub]},
 ]
 ```
 
@@ -798,13 +755,15 @@ programs += [
 ### 必要な環境
 - LEGO SPIKE Prime ハブ
 - Pybricks Firmware（最新版推奨）
-- 2つのモーター（Port F, Port B）
+- 4つのモーター（Port F, Port B, Port E, Port A）
 - フォースセンサー（Port C、オプション）
 
 ### ハードウェア設定
 ```
-Port F: 左モーター（反時計回り）
-Port B: 右モーター（時計回り）
+Port F: 左ホイールモーター（反時計回り）
+Port B: 右ホイールモーター（時計回り）
+Port E: 左リフトモーター（時計回り）
+Port A: 右リフトモーター（時計回り）
 Port C: フォースセンサー（プログラム選択用）
 ```
 
@@ -822,10 +781,10 @@ Port C: フォースセンサー（プログラム選択用）
 from setup import initialize_robot
 
 # デフォルト設定で初期化
-hub, left, right, robot = initialize_robot()
+hub, robot, left_wheel, right_wheel, left_lift, right_lift = initialize_robot()
 
 # カスタム設定で初期化
-hub, left, right, robot = initialize_robot(
+hub, robot, left_wheel, right_wheel, left_lift, right_lift = initialize_robot(
     straight_speed_percent=50,    # 直進速度50%
     turn_speed_percent=40,        # 旋回速度40%
     motor_power_percent=80        # モーターパワー80%
@@ -838,8 +797,11 @@ hub, left, right, robot = initialize_robot(
 
 #### 2.1 セレクターの起動
 ```bash
-# selecter.pyを実行
+# selecter.pyを実行（競技用）
 python selecter.py
+
+# selecter_dev.pyを実行（開発用・ログ付き）
+python selecter_dev.py
 ```
 
 #### 2.2 操作方法
@@ -872,12 +834,12 @@ programs = [
 新しい動作を別ファイルに切り出して管理したい場合の手順です。
 
 - **ファイル名のルール（重要）**: Pythonでインポートできるように、英数字とアンダースコアのみを使用してください。
-  - 例: `my_actions_gemini_2_5_pro.py`（括弧やハイフンは使わない）
+  - 例: `my_actions_claude_3_5_sonnet.py`（括弧やハイフンは使わない）
 
-1) 新しいファイルを作成（例: `my_actions_gemini_2_5_pro.py`）
+1) 新しいファイルを作成（例: `my_actions_claude_3_5_sonnet.py`）
 
 ```python
-"""Generated with Gemini-2.5-pro"""
+"""Generated with Claude-3.5-Sonnet"""
 
 from pybricks.tools import wait
 
@@ -898,18 +860,18 @@ def turn_and_go(robot, hub, angle_deg: int, distance_mm: int, motor_power: int):
 
 ```python
 # ファイル先頭付近に追記
-import my_actions_gemini_2_5_pro as my_actions
+import my_actions_claude_3_5_sonnet as my_actions
 ```
 
 補足: ファイル名にモデル名を括弧付きで含めたい場合
 
-- 例: `my_actions（Gemini-2.5-pro）.py` のように括弧やハイフンを含むと、`import my_actions（...）` のような通常のインポートはできません。
+- 例: `my_actions（Claude-3.5-Sonnet）.py` のように括弧やハイフンを含むと、`import my_actions（...）` のような通常のインポートはできません。
 - この場合は `importlib` を使ってファイルパスから読み込みます（下記例ではモジュール名を `my_actions` に割り当て）。
 
 ```python
 import importlib.util, sys
 
-module_path = "my_actions（Gemini-2.5-pro）.py"
+module_path = "my_actions（Claude-3.5-Sonnet）.py"
 spec = importlib.util.spec_from_file_location("my_actions", module_path)
 my_actions = importlib.util.module_from_spec(spec)
 sys.modules["my_actions"] = my_actions
@@ -981,7 +943,7 @@ python selecter.py
 推奨シグネチャ（例）
 
 ```python
-# my_actions_gemini_2_5_pro.py
+# my_actions_claude_3_5_sonnet.py
 from pybricks.tools import wait
 
 def go_and_turn(robot, hub, distance_mm: int, angle_deg: int, power: int) -> None:
@@ -1009,7 +971,7 @@ def lift_and_move(robot, lift_motor: Motor, up_deg: int, distance_mm: int, power
 
 ```python
 {"name": "進む→回る", "module": my_actions, "description": "直進後に回転", "function": "go_and_turn", "params": [robot, hub, 150, 90, 40]}
-{"name": "持ち上げ→前進", "module": my_actions, "description": "リフト後に前進", "function": "lift_and_move", "params": [robot, lift, 90, 200, 30]}
+{"name": "持ち上げ→前進", "module": my_actions, "description": "リフト後に前進", "function": "lift_and_move", "params": [robot, left_lift, 90, 200, 30]}
 ```
 
 注意点
@@ -1037,7 +999,7 @@ python straight_test.py
 
 直進距離と回転角度の精度を測定するための簡易テストです。下記を新規ファイルとして保存して実行できます。
 
-- 推奨ファイル名: `accuracy_test_gemini_2_5_pro.py`
+- 推奨ファイル名: `accuracy_test_claude_3_5_sonnet.py`
 
 ```python
 from pybricks.tools import wait
@@ -1080,7 +1042,7 @@ def turn_accuracy_test(robot, hub, target_deg: int = 90, power: int = 30, trials
 
 
 if __name__ == "__main__":
-    hub, left, right, robot = initialize_robot()
+    hub, robot, left_wheel, right_wheel, left_lift, right_lift = initialize_robot()
 
     # 直進の精度テスト（例: 100mm を出力50%で5回）
     straight_accuracy_test(robot, target_mm=100, power=50, trials=5)
@@ -1145,8 +1107,10 @@ run_task(multitask(
 ```python
 def check_robot_status():
     """ロボットの状態を確認"""
-    print(f"左モーター角度: {left.angle()}°")
-    print(f"右モーター角度: {right.angle()}°")
+    print(f"左モーター角度: {left_wheel.angle()}°")
+    print(f"右モーター角度: {right_wheel.angle()}°")
+    print(f"左リフト角度: {left_lift.angle()}°")
+    print(f"右リフト角度: {right_lift.angle()}°")
     print(f"走行距離: {robot.distance()} mm")
     print(f"現在の向き: {hub.imu.heading()}°")
     print(f"バッテリー残量: {hub.battery.voltage()} mV")
@@ -1161,7 +1125,7 @@ def safe_robot_operation():
     """安全なロボット操作"""
     try:
         # ロボットの初期化
-        hub, left, right, robot = initialize_robot()
+        hub, robot, left_wheel, right_wheel, left_lift, right_lift = initialize_robot()
         
         # 動作実行
         straight_with_power(robot, 100, 50)
@@ -1310,6 +1274,7 @@ def custom_action(robot, parameter):
 2. **リセット**: エラー発生時はロボットをリセットしてください
 3. **センサー**: ジャイロセンサーの初期化を忘れずに行ってください
 4. **非同期処理**: `run_task()`を使用して非同期タスクを適切に管理してください
+5. **API変更**: `robot.arc()`は廃止されました。`robot.curve()`を使用してください
 
 ## 🐛 トラブルシューティング
 
@@ -1317,9 +1282,17 @@ def custom_action(robot, parameter):
 - **直進精度が悪い**: PIDパラメータの調整が必要
 - **モーターが逆回転**: `positive_direction`の設定を確認
 - **センサー値が異常**: ジャイロセンサーのリセットを実行
+- **Device or resource busy**: 他のプログラムがモーターを使用中。ロボットを再起動
 
 ### デバッグ方法
-1. センサーログを確認
+1. センサーログを確認（`selecter_dev.py`で`dev = True`）
 2. 各ステップで`print()`文を追加
 3. エラーメッセージを確認
+4. `robot.stop()`と`robot.reset()`でリソースをクリア
+
+### パフォーマンス最適化
+- 競技時は`selecter.py`（ログなし）を使用
+- 不要な`wait()`を削除
+- 並行処理（`wait=False`）の活用
+- PID設定の最適化
 
