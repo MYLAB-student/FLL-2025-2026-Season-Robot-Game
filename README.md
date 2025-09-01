@@ -53,63 +53,65 @@
 
 #### ロボットを動かすサンプルコード
 
-    # 以下は基本的なロボット動作の例です。必要に応じてコメントアウトを解除して使用してください
+```python
+# 以下は基本的なロボット動作の例です。必要に応じてコメントアウトを解除して使用してください
 
 
-    # 【awaitについて】
-    # await = 動作が完了するまで待機（順次実行）　
-    # 以下の例では、直進が終わるまでアームは上がらない
-    await robot.straight(300)　
-    await left_lift.run_angle(200, 360)
-     
-    # awaitなし = 動作を開始してすぐ次の処理へ（並行実行）
-    # 以下の例では、直進とアームの動作が同時に行われる
-    robot.straight(300)
-    await left_lift.run_angle(200, 360)
+# 【awaitについて】
+# await = 動作が完了するまで待機（順次実行）　
+# 以下の例では、直進が終わるまでアームは上がらない
+await robot.straight(300)　
+await left_lift.run_angle(200, 360)
+ 
+# awaitなし = 動作を開始してすぐ次の処理へ（並行実行）
+# 以下の例では、直進とアームの動作が同時に行われる
+robot.straight(300)
+await left_lift.run_angle(200, 360)
 
 
-    # 動作速度の設定: robot.settingsで直進・回転速度を調整
-    # 初期値    straight_speed=200　→　40% of 500 mm/s、 turn_rate=150　→　30% of 500 deg/s    
-     
-    # 直進速度を200mm/sに設定して前進
-    robot.settings(straight_speed=200)  # 直進200mm/s
-    await robot.straight(300)　# 300mm前進
-     
-    # 回転速度を100deg/sに設定して回転
-    robot.settings(turn_rate=100)  # 回転100deg/s    
-    await robot.turn(90) 90度右回転
-     
-    # 前進速度を400mm/s、回転速度を200deg/sに設定して実行
-    robot.settings(straight_speed=400, turn_rate=200)  # 前進速度と回転速度を設定
-    await robot.straight(300)　# 300mm前進
-    await robot.turn(90) # 90度右回転
+# 動作速度の設定: robot.settingsで直進・回転速度を調整
+# 初期値    straight_speed=200　→　40% of 500 mm/s、 turn_rate=150　→　30% of 500 deg/s    
+ 
+# 直進速度を200mm/sに設定して前進
+robot.settings(straight_speed=200)  # 直進200mm/s
+await robot.straight(300)　# 300mm前進
+ 
+# 回転速度を100deg/sに設定して回転
+robot.settings(turn_rate=100)  # 回転100deg/s    
+await robot.turn(90) # 90度右回転
+ 
+# 前進速度を400mm/s、回転速度を200deg/sに設定して実行
+robot.settings(straight_speed=400, turn_rate=200)  # 前進速度と回転速度を設定
+await robot.straight(300)　# 300mm前進
+await robot.turn(90) # 90度右回転
 
 
-    # 直進移動: 300mm前進（非同期実行）
-    await robot.straight(300)　# 300mm前進
-    await robot.straight(-300)　# 300mm後進
+# 直進移動: 300mm前進（非同期実行）
+await robot.straight(300)　# 300mm前進
+await robot.straight(-300)　# 300mm後進
 
 
-    # 回転動作: その場で90度右回転（非同期実行）
-    await robot.turn(90) # 90度右回転
+# 回転動作: その場で90度右回転（非同期実行）
+await robot.turn(90) # 90度右回転
 
 
-    # カーブ移動: 半径150mmで90度カーブ（非同期実行）
-    await robot.curve(150, 90)
-    
-
-    # リフト操作: 左リフトを速度200で360度回転（非同期実行）
-    await left_lift.run_angle(200, 360)
+# カーブ移動: 半径150mmで90度カーブ（非同期実行）
+await robot.curve(150, 90)
 
 
-    # リフト操作: 左リフトを速度200で360度回転（同期実行・awaitなし）
-    left_lift.run_angle(200, 360)
+# リフト操作: 左リフトを速度200で360度回転（非同期実行）
+await left_lift.run_angle(200, 360)
 
-    # 前進を始めて1秒後にアームを上げる（並行実行）
-    robot.settings(straight_speed=200, turn_rate=150) # 直進速度と回転速度を設定
-    robot.straight(500, wait=False)  # 500mm前進開始（すぐに次の処理へ）
-    await wait(1000)  # 1秒待つ
-    await left_lift.run_angle(300, 180)  # 左アームを上げる
+
+# リフト操作: 左リフトを速度200で360度回転（同期実行・awaitなし）
+left_lift.run_angle(200, 360)
+
+# 前進を始めて1秒後にアームを上げる（並行実行）
+robot.settings(straight_speed=200, turn_rate=150) # 直進速度と回転速度を設定
+robot.straight(500, wait=False)  # 500mm前進開始（すぐに次の処理へ）
+await wait(1000)  # 1秒待つ
+await left_lift.run_angle(300, 180)  # 左アームを上げる
+```
 
 
 
