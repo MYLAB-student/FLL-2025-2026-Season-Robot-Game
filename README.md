@@ -7,6 +7,11 @@
 - [📁 プロジェクト構成](#-プロジェクト構成)
 - [⚡ 開発時の流れ](#-開発時の流れ)
   - [新しいランファイルの作成手順](#新しいランファイルの作成手順)
+  - [ローバー・アーム操作の詳細例](#ローバーアーム操作の詳細例)
+    - [🚗 単純な操作](#-単純な操作)
+    - [🔄 複雑な操作](#-複雑な操作)
+    - [🎯 実践的なミッション例](#-実践的なミッション例)
+    - [💡 モーター制御のコツ](#-モーター制御のコツ)
   - [selector.pyでの登録手順](#selectorpyでの登録手順)
 - [⚡ 競技時の操作方法](#-競技時の操作方法)
 - [🚀 機能](#-機能)
@@ -14,6 +19,7 @@
 - [📖 使用方法](#-使用方法)
 - [⚙️ 設定パラメータ](#️-設定パラメータ)
 - [🔍 センサー情報](#-センサー情報)
+  - [ログ機能のオン・オフ切り替え](#ログ機能のオンオフ切り替え)
 - [🛠️ カスタマイズ](#️-カスタマイズ)
 - [⚠️ 注意事項](#️-注意事項)
 - [🐛 トラブルシューティング](#-トラブルシューティング)
@@ -33,6 +39,181 @@
 
 ```
 ## ⚡ 開発時の流れ
+
+### 新しいミッションファイルの作成方法（run_template.py使用）
+
+このプロジェクトでは、`run_template.py`を使って新しいミッションファイルを効率的に作成できます。
+
+#### 1. run_template.pyの概要
+
+`run_template.py`は新しいミッションファイル作成のためのテンプレートファイルです。
+
+**特徴:**
+- 基本的なロボット動作のサンプルコード
+- センサーログ機能付き
+- 非同期処理対応
+- そのまま実行可能
+
+**基本構造:**
+```python
+# run_template.py
+from pybricks.hubs import PrimeHub
+from pybricks.parameters import Port, Axis, Direction ,Color
+from pybricks.pupdevices import Motor
+from pybricks.robotics import DriveBase
+from pybricks.tools import wait, multitask, run_task
+from setup import initialize_robot
+
+async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
+    # ここにロボットの動作を記述してください
+    await left_lift.run_angle(200, 360)
+    await robot.straight(300)
+    await robot.turn(90)
+    await robot.arc(150, 90)
+    left_lift.run_angle(200, 360)
+
+# センサーログ機能とメイン実行機能を含む
+```
+
+#### 2. 新しいミッションファイルの作成手順
+
+1. **ファイルのコピー**
+   ```bash
+   # run_template.pyをコピーして新しいミッションファイルを作成
+   cp run_template.py mission01（Claude-3.5-Sonnet）.py
+   ```
+
+2. **run関数の編集**
+   ```python
+   # mission01（Claude-3.5-Sonnet）.py
+   async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
+       """ミッション1: ブロック運搬"""
+       # ここにミッション固有の動作を記述
+       
+       # 例: ブロック取得ポイントまで移動
+       await robot.straight(400)  # 400mm前進
+       await robot.turn(45)       # 45度右回転
+       
+       # アームでブロックを掴む
+       await left_lift.run_angle(300, 180)  # 左アーム操作
+       await right_lift.run_angle(300, 180) # 右アーム操作
+       await wait(500)                      # 0.5秒待機
+       
+       # ブロックを運搬
+       await robot.straight(-100)   # 100mm後退
+       await robot.turn(-90)        # 90度左回転
+       await robot.straight(600)    # 600mm前進
+       
+       # ブロックを配置
+       await left_lift.run_angle(300, -180)  # アームを戻す
+       await right_lift.run_angle(300, -180)
+       await wait(300)
+       
+       # 初期位置に戻る
+       await robot.straight(-300)
+       await robot.turn(45)
+   ```
+
+3. **単体テスト実行**
+   ```bash
+   # 新しいミッションファイルを直接実行してテスト
+   python mission01（Claude-3.5-Sonnet）.py
+   ```
+
+#### 3. selecter_dev.pyへの登録
+
+1. **インポート文の追加**
+   ```python
+   # selecter_dev.py の先頭付近に追加
+   import run
+   import run1
+   import run_sample
+   import mission01_claude_3_5_sonnet as mission01  # 新しく追加（括弧は使えないため）
+   ```
+
+2. **programsリストへの追加**
+   ```python
+   # selecter_dev.py のprogramsリストに新しいエントリを追加
+   programs = [
+       {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
+       {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
+       {"name": "回転", "module": run, "description": "回転", "function": "turn_with_power", "params": [robot,hub,100, 10]},
+       {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", "params": [hub ,robot, left_wheel, right_wheel,left_lift,right_lift]},
+       {"name": "run1", "module": run_sample, "description": "run1関数", "function": "run1", "params": [hub ,robot, left_wheel, right_wheel,left_lift,right_lift]},
+       {"name": "ミッション1", "module": mission01, "description": "ブロック運搬ミッション", "function": "run", "params": [hub ,robot, left_wheel, right_wheel,left_lift,right_lift]},  # 新しく追加
+       # 他のプログラムをここに追加
+   ]
+   ```
+
+#### 4. selecter_dev.pyでのテスト実行
+
+1. **開発モードでの実行**
+   ```bash
+   # selecter_dev.py を実行（センサーログ有効）
+   python selecter_dev.py
+   ```
+
+2. **操作方法**
+   - **LEFTボタン**: 前のプログラムに切り替え
+   - **RIGHTボタン**: 次のプログラムに切り替え  
+   - **フォースセンサー**: 選択したプログラムを実行
+
+3. **デバッグ機能**
+   ```python
+   # selecter_dev.py の11行目でログの有効/無効を切り替え
+   dev = True   # センサーログ表示
+   dev = False  # センサーログ非表示（高速実行）
+   ```
+
+#### 5. ファイル命名規則
+
+**推奨ファイル名:**
+- `mission01（Claude-3.5-Sonnet）.py` ← ユーザールール対応
+- `task_delivery（Claude-3.5-Sonnet）.py`
+- `bridge_mission（Claude-3.5-Sonnet）.py`
+
+**インポート時の注意:**
+```python
+# 括弧やハイフンを含むファイル名は通常のインポートができない
+# import mission01（Claude-3.5-Sonnet）  # エラー
+
+# 解決方法1: ファイル名を変更
+# mission01_claude_3_5_sonnet.py にリネーム
+import mission01_claude_3_5_sonnet as mission01
+
+# 解決方法2: importlibを使用（括弧付きファイル名の場合）
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("mission01", "mission01（Claude-3.5-Sonnet）.py")
+mission01 = importlib.util.module_from_spec(spec)
+sys.modules["mission01"] = mission01
+spec.loader.exec_module(mission01)
+```
+
+#### 6. 運用フロー
+
+```
+1. run_template.py をコピー
+     ↓
+2. ミッション内容に合わせて run関数 を編集
+     ↓
+3. 単体で動作テスト（python mission●.py）
+     ↓
+4. selecter_dev.py にインポート・登録
+     ↓
+5. セレクターでの動作確認（dev=True）
+     ↓
+6. 問題なければ selecter.py にも登録
+     ↓
+7. 競技用として selecter.py をハブに書き込み
+```
+
+#### 7. run_template.pyとselecter_dev.pyの連携メリット
+
+- **効率的な開発**: テンプレートで基本構造を素早く作成
+- **統一された形式**: 全てのミッションファイルが同じ構造
+- **デバッグ支援**: selecter_dev.pyのセンサーログで動作確認
+- **段階的テスト**: 単体テスト → セレクター統合テスト
+- **簡単な切り替え**: ボタン操作で複数ミッションを素早く実行
 
 ### 新しいランファイルの作成手順
 
@@ -70,6 +251,227 @@
    - プロジェクトルートディレクトリに保存
    - 文字エンコーディングはUTF-8で保存
 
+### ローバー・アーム操作の詳細例
+
+このプロジェクトでは、**ローバー用2つのモーター**と**アーム用2つのモーター**の計4つのモーターを制御できます。以下に具体的な操作パターンの記載例を示します。
+
+#### 🚗 単純な操作
+
+##### ローバーを動かす（robot, left_wheel, right_wheel使用）
+
+**基本的な移動:**
+```python
+def basic_movement_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """基本的なローバー移動の例"""
+    # 前進
+    robot.straight(300)  # 300mm前進
+    wait(200)
+    
+    # 後進
+    robot.straight(-200)  # 200mm後進
+    wait(200)
+    
+    # 回転（その場回転）
+    robot.turn(90)   # 90度右回転
+    wait(200)
+    robot.turn(-90)  # 90度左回転
+    wait(200)
+```
+
+**前進しながら曲がる（カーブ移動）:**
+```python
+def curve_movement_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """カーブ移動の例"""
+    # 大きな弧を描いて移動（radius: 半径, angle: 角度）
+    robot.curve(200, 90)   # 半径200mmで90度カーブ
+    wait(300)
+    
+    # 逆方向のカーブ
+    robot.curve(150, -45)  # 半径150mmで45度左カーブ
+    wait(300)
+```
+
+**その場での向き変更（2つの方法）:**
+```python
+def rotation_methods_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """回転方法の比較例"""
+    # 方法1: 両輪逆回転（高速・正確）
+    robot.turn(180)  # robotオブジェクトを使用
+    wait(500)
+    
+    # 方法2: 片輪のみ回転（ゆっくり・安定）
+    left_wheel.run_angle(200, 360)   # 左輪のみ360度回転
+    wait(500)
+    
+    # 方法3: 手動で両輪制御（細かい調整可能）
+    left_wheel.run_angle(300, 180, wait=False)   # 左輪正転（非同期）
+    right_wheel.run_angle(300, -180)             # 右輪逆転（同期）
+    wait(200)
+```
+
+##### アーム用モーターを動かす（left_lift, right_lift使用）
+
+**単純なアーム操作:**
+```python
+def simple_arm_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """基本的なアーム操作の例"""
+    # 両アームを同時に上げる
+    left_lift.run_angle(500, 180)   # 速度500で180度回転
+    right_lift.run_angle(500, 180)
+    wait(300)
+    
+    # 両アームを同時に下げる
+    left_lift.run_angle(500, -180)
+    right_lift.run_angle(500, -180)
+    wait(300)
+    
+    # 片方のアームのみ操作
+    left_lift.run_angle(300, 90)    # 左アームのみ90度回転
+    wait(200)
+    left_lift.run_angle(300, -90)   # 元の位置に戻す
+    wait(200)
+```
+
+#### 🔄 複雑な操作
+
+##### ローバー移動後にアーム操作（順次実行）
+
+```python
+def sequential_operation_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """順次操作の例: 移動→停止→アーム操作"""
+    # ステップ1: 目標地点まで移動
+    robot.straight(400)     # 400mm前進
+    robot.turn(45)          # 45度回転
+    robot.straight(200)     # さらに200mm前進
+    
+    # ステップ2: 完全停止を確認
+    robot.stop()
+    wait(500)               # 振動が収まるまで待機
+    
+    # ステップ3: アーム操作開始
+    print("アーム操作開始")
+    left_lift.run_angle(400, 270)   # 左アーム270度回転
+    right_lift.run_angle(400, 270)  # 右アーム270度回転
+    wait(1000)                      # アーム動作完了待ち
+    
+    # ステップ4: アームを戻して移動再開
+    left_lift.run_angle(400, -270)
+    right_lift.run_angle(400, -270)
+    wait(500)
+    robot.straight(-200)            # 後退
+```
+
+##### ローバー移動中にアーム操作（並行実行）
+
+```python
+def parallel_operation_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """並行操作の例: 移動しながらアーム操作"""
+    # 移動開始と同時にアーム操作開始（非同期）
+    left_lift.run_angle(300, 180, wait=False)   # wait=Falseで非同期実行
+    right_lift.run_angle(300, 180, wait=False)
+    
+    # アームが動いている間にローバーも移動
+    robot.straight(500)     # アーム動作中に移動
+    wait(200)               # アーム動作完了を待つ
+    
+    # 移動しながらアームを戻す
+    left_lift.run_angle(400, -180, wait=False)
+    right_lift.run_angle(400, -180, wait=False)
+    robot.turn(90)          # アームが戻りながら回転
+    wait(500)
+```
+
+##### 片方のアーム動作中にもう片方のアーム操作
+
+```python
+def independent_arm_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """独立したアーム操作の例"""
+    # 左アームを動かし始める（非同期）
+    left_lift.run_angle(200, 360, wait=False)
+    wait(500)               # 少し遅れて...
+    
+    # 右アームも動かし始める（非同期）
+    right_lift.run_angle(300, -180, wait=False)
+    wait(200)
+    
+    # 両方のアームが動いている間にローバーも移動
+    robot.straight(300)
+    
+    # 左アームの動作が終わったら別の動作
+    wait(1000)              # 左アーム完了を待つ
+    left_lift.run_angle(400, -180)  # 左アームを逆方向に
+    
+    # 右アームはまだ動いている可能性があるので待つ
+    wait(800)               # 右アーム完了を待つ
+    right_lift.run_angle(400, 90)   # 右アームの追加動作
+```
+
+#### 🎯 実践的なミッション例
+
+```python
+def mission_complete_example(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """実際のミッションを想定した複合操作"""
+    print("ミッション開始: ブロック取得・運搬・配置")
+    
+    # フェーズ1: ブロック取得地点まで移動
+    robot.straight(600)
+    robot.turn(45)
+    robot.straight(300)
+    
+    # フェーズ2: ブロック取得（アーム操作）
+    print("ブロック取得中...")
+    left_lift.run_angle(300, 90, wait=False)   # 両アーム展開
+    right_lift.run_angle(300, 90, wait=False)
+    robot.straight(100)                        # ブロックに接近
+    wait(500)
+    left_lift.run_angle(300, -120)             # ブロックを掴む
+    right_lift.run_angle(300, -120)
+    wait(300)
+    
+    # フェーズ3: 運搬（移動中にアーム保持）
+    print("運搬中...")
+    robot.straight(-100)                       # ブロックから離れる
+    robot.turn(-90)                           # 配置地点へ向く
+    
+    # 運搬中にアームの位置調整
+    left_lift.run_angle(200, 30, wait=False)  # 運搬しやすい位置に
+    right_lift.run_angle(200, 30, wait=False)
+    robot.straight(800)                        # 配置地点まで移動
+    
+    # フェーズ4: ブロック配置
+    print("ブロック配置中...")
+    robot.straight(50)                         # 配置位置に精密接近
+    left_lift.run_angle(400, 120)             # ブロックを配置
+    right_lift.run_angle(400, 120)
+    wait(500)
+    robot.straight(-150)                       # 配置地点から離脱
+    
+    # フェーズ5: 初期位置に戻る
+    left_lift.run_angle(500, -90)             # アームを初期位置に
+    right_lift.run_angle(500, -90)
+    robot.turn(180)                           # 向きを戻す
+    robot.straight(600)                        # 初期位置まで移動
+    
+    print("ミッション完了!")
+```
+
+#### 💡 モーター制御のコツ
+
+**速度設定の目安:**
+- 精密作業: 100-300
+- 通常動作: 300-500  
+- 高速移動: 500-800
+
+**wait()の使い方:**
+- 機械的な動作後: `wait(200-500)`
+- 振動収束待ち: `wait(300-800)`
+- 安全確認: `wait(100-200)`
+
+**非同期実行(`wait=False`)の活用:**
+- 複数モーターの同時動作
+- 移動とアーム操作の並行実行
+- 効率的な時間短縮
+
 ### selector.pyでの登録手順
 
 1. **新しいrunファイルのインポート**
@@ -94,11 +496,78 @@
    ```
 
 3. **プログラムエントリの構成要素**
+
+   各プログラムエントリは辞書形式で以下の要素を含みます：
+
+   **必須要素:**
    - `name`: セレクター表示名（短くわかりやすく）
    - `module`: インポートしたモジュール名
    - `description`: 詳細説明（ターミナル表示用）
    - `function`: 実行する関数名（文字列）
-   - `params`: 関数に渡すパラメータのリスト
+
+   **任意要素:**
+   - `params`: 関数に渡すパラメータのリスト（省略時は引数なしで実行）
+
+   **具体例:**
+
+   ```python
+   # 例1: 基本的なrun関数の登録
+   {
+       "name": "run2",                    # ハブディスプレイに表示される名前
+       "module": run2,                    # インポートしたrun2モジュール
+       "description": "ミッション2実行",   # ターミナルに表示される詳細説明
+       "function": "run2",                # run2モジュール内のrun2関数を実行
+       "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]  # 関数に渡す引数
+   }
+
+   # 例2: runモジュールの関数を使用
+   {
+       "name": "直進テスト",
+       "module": run,
+       "description": "100mm直進（50%パワー）",
+       "function": "straight_with_power",
+       "params": [robot, 100, 50]         # robot, 距離, パワーの順
+   }
+
+   # 例3: 回転動作
+   {
+       "name": "右90度",
+       "module": run,
+       "description": "90度右回転（30%パワー）",
+       "function": "turn_with_power",
+       "params": [robot, hub, 90, 30]     # robot, hub, 角度, パワーの順
+   }
+
+   # 例4: パラメータなしの関数（引数が不要な場合）
+   {
+       "name": "初期化",
+       "module": setup_module,
+       "description": "ロボット初期化のみ",
+       "function": "reset_all"
+       # paramsを省略 = 引数なしで実行
+   }
+   ```
+
+   **パラメータ設定のコツ:**
+   - `params`の順序は関数定義の引数順序と完全に一致させる
+   - ロボットオブジェクト（hub, robot等）は最初に配置することが多い
+   - 数値パラメータ（距離、角度、パワー等）は後に配置
+   - 省略した場合は引数なしで関数が呼ばれる
+
+   **よくある間違いと対策:**
+   ```python
+   # ❌ 間違い: 引数の順序が関数定義と異なる
+   {"function": "straight_with_power", "params": [100, robot, 50]}  # robot が2番目になっている
+
+   # ✅ 正しい: 関数定義 def straight_with_power(robot, distance_mm, motor_power) に合わせる
+   {"function": "straight_with_power", "params": [robot, 100, 50]}
+
+   # ❌ 間違い: 必要な引数が不足
+   {"function": "run2", "params": [robot, hub]}  # left_wheel, right_wheel, left_lift, right_lift が不足
+
+   # ✅ 正しい: 関数が要求するすべての引数を提供
+   {"function": "run2", "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]}
+   ```
 
 4. **動作確認**
    - selecter.pyを実行してプログラムリストに表示されることを確認
@@ -108,10 +577,88 @@
    - Pybricks Appからselecter.pyをメインとしてハブにダウンロード
    - オフライン実行が可能になる
 
-### 注意点
-- runファイルの関数は必ず`robot, hub, left, right, lift`の5つの引数を受け取る形式にする
+### 注意点とベストプラクティス
+
+#### runファイルの関数引数について
+
+**重要**: runファイルの関数は、selecter.pyで初期化されたロボットオブジェクトを受け取る形式にする必要があります。
+
+**関数シグネチャの標準形式**:
+```python
+def run●(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """
+    Args:
+        hub: PrimeHubオブジェクト（ジャイロセンサー、ボタン、ディスプレイ等）
+        robot: DriveBaseオブジェクト（直進・回転制御）
+        left_wheel: 左車輪モーターオブジェクト
+        right_wheel: 右車輪モーターオブジェクト  
+        left_lift: 左リフトモーターオブジェクト
+        right_lift: 右リフトモーターオブジェクト
+    """
+    # ミッション動作をここに記述
+```
+
+**具体例 1: 基本的な移動とリフト操作**
+```python
+def run2(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """ミッション2: 前進してブロックを持ち上げる"""
+    # 200mm前進
+    robot.straight(200)
+    
+    # リフトを上げる（360度回転）
+    left_lift.run_angle(360, 360)
+    right_lift.run_angle(360, 360)
+    
+    # 少し待機
+    wait(500)
+    
+    # 100mm後退
+    robot.straight(-100)
+    
+    # ジャイロセンサーをリセット
+    hub.imu.reset_heading(0)
+```
+
+**具体例 2: 複雑なルート移動**
+```python
+def run3(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
+    """ミッション3: L字ルート移動"""
+    # 最初の直進
+    robot.straight(300)
+    
+    # 90度右回転
+    robot.turn(90)
+    
+    # リフトで何かを掴む動作
+    left_lift.run_angle(500, 180)   # ゆっくり180度
+    right_lift.run_angle(500, 180)
+    
+    # 2番目の直進
+    robot.straight(200)
+    
+    # リフトを戻す
+    left_lift.run_angle(500, -180)
+    right_lift.run_angle(500, -180)
+    
+    # 最終位置調整
+    robot.turn(-45)
+    robot.straight(100)
+```
+
+**selecter.pyでの対応する登録例**:
+```python
+programs = [
+    # 既存のエントリ...
+    {"name": "run2", "module": run2, "description": "ミッション2: ブロック持ち上げ", "function": "run2", "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]},
+    {"name": "run3", "module": run3, "description": "ミッション3: L字ルート", "function": "run3", "params": [hub, robot, left_wheel, right_wheel, left_lift, right_lift]},
+]
+```
+
+#### その他の注意点
 - インポート順序はselecter.pyで参照する順番に合わせる
 - プログラム名は重複しないよう注意する
+- 関数内で`wait()`を適宜使用してロボットの安定動作を確保する
+- エラーが発生しやすい動作の前後には`robot.stop()`を入れることを推奨
 
 
 
@@ -603,6 +1150,81 @@ LOG: dist= 150 mm  heading=  45°  L=  180°  R=  180°
 - `heading`: 現在の向き（度）
 - `L`: 左モーター角度（度）
 - `R`: 右モーター角度（度）
+
+### ログ機能のオン・オフ切り替え
+
+プロジェクトには開発用と競技用でログ機能を切り替えられる仕組みが実装されています。
+
+#### ファイル別のログ機能
+
+| ファイル | ログ機能 | 用途 |
+|---------|---------|------|
+| `selecter.py` | **なし** | 競技本番用（高速実行） |
+| `selecter_dev.py` | **切り替え可能** | 開発・デバッグ用 |
+| `straight_test.py` | **常時有効** | テスト・調整用 |
+
+#### selecter_dev.pyでのログ切り替え
+
+**ログ有効にする場合:**
+```python
+# selecter_dev.py の11行目を編集
+dev = True  # ログを表示
+
+# 実行時の動作
+run_task(multitask(
+    sensor_logger_task(),  # センサーログタスクを並行実行
+    selecter_task()        # プログラム選択タスク
+))
+```
+
+**ログ無効にする場合:**
+```python
+# selecter_dev.py の11行目を編集
+dev = False  # ログを非表示
+
+# 実行時の動作
+run_task(multitask(
+    selecter_task()        # プログラム選択タスクのみ実行
+))
+```
+
+#### ログ表示の詳細
+
+**更新間隔:** 200ms（0.2秒）ごと  
+**表示フォーマット:**
+```
+--- センサーログタスク開始 ---
+LOG: dist= 150 mm  heading=  45°  L=  180°  R=  180°
+LOG: dist= 165 mm  heading=  47°  L=  195°  R=  195°
+LOG: dist= 180 mm  heading=  48°  L=  210°  R=  210°
+```
+
+#### 使用場面別の推奨設定
+
+**🔧 開発・デバッグ時:**
+- `selecter_dev.py`を使用
+- `dev = True`に設定
+- センサー値をリアルタイムで確認しながら調整
+
+**🏁 競技本番時:**
+- `selecter.py`を使用
+- ログオーバーヘッドなしで最高性能を発揮
+
+**🧪 精度テスト時:**
+- `straight_test.py`を使用
+- 常時ログ有効で詳細な動作確認
+
+#### パフォーマンスへの影響
+
+| 設定 | CPU使用率 | メモリ使用量 | 応答性 |
+|------|-----------|-------------|---------|
+| ログ有効 | 高 | 中 | やや低下 |
+| ログ無効 | 低 | 低 | 最高 |
+
+**注意点:**
+- ログが有効な場合、200msごとのprint処理により若干の性能低下があります
+- 競技時はログを無効にすることで最高のパフォーマンスを確保できます
+- 開発時はログを有効にしてロボットの状態を把握することが重要です
 
 ## 🛠️ カスタマイズ
 
