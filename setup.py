@@ -30,7 +30,7 @@ def setup_robot_parameters(left_wheel, right_wheel, straight_speed_percent=40, t
     robot = DriveBase(
                     left_wheel, 
                     right_wheel, 
-                    wheel_diameter=56, 
+                    wheel_diameter=62, 
                     axle_track=115   
     )
 
