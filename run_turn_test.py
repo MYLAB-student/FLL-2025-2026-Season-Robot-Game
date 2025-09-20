@@ -5,15 +5,38 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import wait, multitask, run_task, StopWatch
 from setup import initialize_robot
 
-
 async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 #######################################
-    # ここにロボットの動作を記述してください
-
+    #度/秒
+    rate=250
+    #回転角度
+    deg=180
+    print(f"-------------{str(rate)}/s {str(deg)}deg-----------------")
+    await wait(3000)
+    robot.settings(straight_speed=500, turn_rate=rate)  # 直進200mm/s, 回転100deg/s
+    
+    # 直進移動: 300mm前進（非同期実行）
+    #await robot.straight(-500)
+    await wait(500)
+    
+    # 時間測定開始
+    timer = StopWatch()
+    timer.reset()
+    print(f"回転開始: {deg}度回転（速度: {rate}deg/s）")
+    
+    await robot.turn(deg)
+    
+    # 時間測定終了
+    elapsed_time = timer.time()
+    print(f"回転完了: {elapsed_time}ms かかりました")
+    print(f"理論時間: {abs(deg) / rate * 1000:.1f}ms（{abs(deg)}度 ÷ {rate}deg/s）")
+    print(f"実測時間: {elapsed_time}ms")
+    
+    await wait(3000)
+    raise SystemExit
     pass  # 何も実行しない場合の構文エラー回避
     
 ##########################################
-
 
 
 async def sensor_logger_task():
@@ -25,7 +48,8 @@ async def sensor_logger_task():
     # 経過時間測定用のタイマーを開始
     logger_timer = StopWatch()
     logger_timer.reset()
-    
+    left_wheel.reset_angle(0)
+    right_wheel.reset_angle(0)
     while True: # プログラムが終了するまで継続的にログを出力
         elapsed_time = logger_timer.time()
         heading = hub.imu.heading()

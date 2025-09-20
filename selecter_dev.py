@@ -2,7 +2,7 @@ from pybricks.hubs import PrimeHub
 from pybricks.parameters import Port, Axis, Direction, Button, Color
 from pybricks.pupdevices import Motor, ForceSensor
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait, multitask, run_task
+from pybricks.tools import wait, multitask, run_task, StopWatch
 from setup import initialize_robot
 import run
 import run1
@@ -46,13 +46,18 @@ async def sensor_logger_task():
     他のタスク（ロボットの移動）と並行して実行されます。
     """
     print("--- センサーログタスク開始 ---")
+    # 経過時間測定用のタイマーを開始
+    logger_timer = StopWatch()
+    logger_timer.reset()
+    
     while True: # プログラムが終了するまで継続的にログを出力
+        elapsed_time = logger_timer.time()
         heading = hub.imu.heading()
         left_deg = left_wheel.angle()
         right_deg = right_wheel.angle()
         dist = robot.distance()
-        print(f"LOG: dist={dist:4.0f} mm  heading={heading:4.0f}°  L={left_deg:5.0f}°  R={right_deg:5.0f}°")
-        await wait(200) # 100ミリ秒待機して、他のタスクに実行を譲る
+        print(f"LOG[{elapsed_time:5.0f}ms]: dist={dist:4.0f} mm  heading={heading:4.0f}°  L={left_deg:5.0f}°  R={right_deg:5.0f}°")
+        await wait(200) # 200ミリ秒待機して、他のタスクに実行を譲る
 
 async def selecter_task():
     program_id = 0

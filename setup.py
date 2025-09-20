@@ -76,6 +76,14 @@ def initialize_sensors(hub, robot):
     hub.imu.reset_heading(0)
     robot.reset()
 
+def reset_motor_angles(left_wheel, right_wheel, left_lift, right_lift):
+    """全モーターの角度をリセット"""
+    left_wheel.reset_angle(0)
+    right_wheel.reset_angle(0)
+    left_lift.reset_angle(0)
+    right_lift.reset_angle(0)
+    print("✓ モーター角度リセット完了: 全モーター=0°")
+
 def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100):
     """ロボットの完全な初期化"""
     print("=== ロボット初期化開始 ===")
@@ -99,6 +107,9 @@ def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_pow
     # センサーの初期化
     initialize_sensors(hub, robot)
     print("✓ センサー初期化完了")
+    
+    # モーター角度のリセット
+    reset_motor_angles(left_wheel, right_wheel, left_lift, right_lift)
     
     print("=== ロボット初期化完了 ===")
     
