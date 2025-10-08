@@ -13,6 +13,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     '''
     '''
+
     await robot.turn(-75)      #曲がる
 
     await robot.straight(600)  #まっすぐすすむ   
@@ -28,13 +29,16 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     # 左のリフトアームを回す
     await left_lift.run_angle(500, 360*15)  # 速度300、180度回転
 
-    await robot.straight(140)  #まっすぐすすむ   
+    await robot.straight(80)  #まっすぐすすむ   
 
     # 左の車輪だけを動かして右に旋回する（約83度）
-    await left_wheel.run_angle(300, 350)  # 左輪を前進させて右旋回（83度）
+    await left_wheel.run_angle(300, 405)  # 左輪を前進させて右旋回（83度）
 
-    await robot.straight(180)  #まっすぐすすむ   
+    await robot.straight(160)  #まっすぐすすむ   
 
+    await robot.straight(-80)  #まっすぐすすむ   
+
+    await robot.turn(20)      #曲がる
 
 
     # 例: ブロイントまで移動
