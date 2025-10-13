@@ -892,6 +892,9 @@ Port C: フォースセンサー（プログラム選択用）
 
 #### 1.1 プログラムの実行手順
 
+0. **Cursorで実行できるようにするための環境構築**
+   - https://pybricks.com/project/pybricks-other-editors/    
+
 1. **ロボットの準備**
    - LEGO SPIKE Primeハブの電源を入れる
    - Bluetoothが有効になっていることを確認
