@@ -14,17 +14,17 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     '''
     '''
 
-    await robot.straight(590)  #まっすぐすすむ   
+    await robot.straight(590)  #M01に向けて前進   
 
-    await robot.straight(-120)  #まっすぐすすむ   
+    await robot.straight(-120)  #M01で後進して奥側の羽を倒す   
 
-    await robot.turn(40)      #曲がる
+    await robot.turn(40)      #M02に向けて方向転換
 
     await robot.straight(220)  #まっすぐすすむ
 
-    await robot.turn(-85)      #曲がる
+    await robot.turn(-85)      #M02に向けて方向転換
 
-    await robot.straight(200)  #まっすぐすすむ
+    await robot.straight(205)  #まっすぐすすむ
 
     await robot.straight(-210)  #まっすぐすすむ
 
@@ -35,6 +35,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     await left_lift.run_angle(300, 180)  # 左アーム操作
 
     await robot.straight(-50)  #まっすぐすすむ
+
     await robot.turn(-70)      #曲がる
 
     await robot.straight(580)  #まっすぐすすむ
