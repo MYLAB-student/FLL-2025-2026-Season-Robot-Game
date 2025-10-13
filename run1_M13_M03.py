@@ -12,7 +12,6 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     # ここにロボットの動作を記述してください
 
     '''
-    '''
 
     await robot.straight(650)  #M13に向けて前進   
 
@@ -24,10 +23,12 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     await robot.straight(150)  #M13に向けて前進   
     await wait(200)                      # 0.2秒待機
+    '''
 
-    await right_lift.run_angle(200, 100) # 右アーム操作（スピード, 角度）
+    await right_lift.run_angle(150, 285) # 右アーム操作（スピード, 角度）
     await wait(200)                      # 0.2秒待機
 
+    '''
     await right_lift.run_angle(200, 100) # 右アーム操作（スピード, 角度）
     await wait(200)                      # 0.2秒待機
 
@@ -37,6 +38,8 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     await right_lift.run_angle(200, 130) # 右アーム操作（スピード, 角度）
     await wait(200)                      # 0.2秒待機
 
+    await robot.turn(10)       # 45度右回転
+    '''
 
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進
