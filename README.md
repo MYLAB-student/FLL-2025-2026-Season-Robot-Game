@@ -16,7 +16,11 @@
 - [⚡ 競技時の操作方法](#-競技時の操作方法)
 - [🚀 機能](#-機能)
 - [🔧 セットアップ](#-セットアップ)
+  - [開発環境のセットアップ（Cursor）](#開発環境のセットアップcursor)
 - [📖 使用方法](#-使用方法)
+  - [Cursorでの実行方法](#1-cursorでの実行方法)
+  - [プログラム選択モード](#3-プログラム選択モード)
+  - [テスト実行](#4-テスト実行)
 - [⚙️ 設定パラメータ](#️-設定パラメータ)
 - [🔍 センサー情報](#-センサー情報)
   - [ログ機能のオン・オフ切り替え](#ログ機能のオンオフ切り替え)
@@ -802,6 +806,73 @@ programs += [
 - Pybricks Firmware（最新版推奨）
 - 2つのモーター（Port F, Port B）
 - フォースセンサー（Port C、オプション）
+- Python 3.7以上
+- Cursor（推奨）
+
+### 開発環境のセットアップ（Cursor）
+
+#### 1. Python仮想環境の作成
+
+プロジェクトディレクトリで以下のコマンドを実行します：
+
+**macOS/Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows PowerShell:**
+```powershell
+py -3 -m venv .venv
+.venv\Scripts\activate
+```
+
+**Cursorを使う場合:**
+1. `F1`キー（macOSでは`⌘+⇧+P`）でコマンドパレットを開く
+2. `Python: Create Environment`を検索して選択
+3. `Venv`を選択
+4. インタープリターで`*Global*`を選択
+5. ターミナルで`Python: Create Terminal`を実行し、仮想環境を有効化
+
+#### 2. 必要なパッケージのインストール
+
+仮想環境が有効化された状態で（プロンプトに`(.venv)`が表示される）、以下のコマンドを実行：
+
+```bash
+pip install pybricks
+pip install pybricksdev
+```
+
+#### 3. launch.jsonの設定
+
+プロジェクトの`.vscode`フォルダに`launch.json`ファイルがあります。必要に応じてロボット名を変更してください：
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pybricksdev",
+            "args": ["run", "ble", "${file}","--name","Pybricks Hub"],
+        }
+    ]
+}
+```
+
+**ロボット名を指定する場合:**
+```json
+"args": ["run", "ble", "${file}", "--name", "my robot"]
+```
+
+`"my robot"`の部分を実際のロボット名に変更してください。
+
+#### 4. 参考資料
+
+より詳しい情報は、Pybricks公式ドキュメントを参照してください：
+- [Using Pybricks with Cursor and other editors](https://pybricks.com/project/pybricks-other-editors/)
 
 ### ハードウェア設定
 ```
@@ -817,9 +888,46 @@ Port C: フォースセンサー（プログラム選択用）
 
 ## 📖 使用方法
 
-### 1. 基本実行
+### 1. Cursorでの実行方法
 
-#### 1.1 ロボットの初期化
+#### 1.1 プログラムの実行手順
+
+1. **ロボットの準備**
+   - LEGO SPIKE Primeハブの電源を入れる
+   - Bluetoothが有効になっていることを確認
+
+2. **Cursorでファイルを開く**
+   - 実行したいPythonファイル（例: `run1.py`、`selecter.py`など）を開く
+
+3. **プログラムの実行**
+   - `F5`キーを押す（macOSでも`F5`）
+   - または、デバッグパネルの緑色の再生ボタンをクリック
+
+4. **実行結果の確認**
+   - ターミナルに接続状況とプログラムの出力が表示されます
+   - ロボットが動作を開始します
+
+#### 1.2 実行時の注意点
+
+**複数のハブがある場合:**
+- `.vscode/launch.json`でロボット名を指定してください
+- 指定しない場合は、最初に見つかったハブに接続されます
+
+**プログラムの停止方法:**
+- Cursorの停止ボタンでは停止できません
+- ハブのボタンを押してプログラムを停止してください
+
+**接続が切れる場合:**
+- プログラムが完了すると自動的に切断されます
+- ハブは数分間アイドル状態が続くと自動的に電源が切れます
+- 再度ハブのボタンを押して起動してください
+
+
+```
+
+### 2. 基本実行（プログラム内での初期化）
+
+#### 2.1 ロボットの初期化
 ```python
 from setup import initialize_robot
 
@@ -836,15 +944,15 @@ hub, left, right, robot = initialize_robot(
 
 
 
-### 2. プログラム選択モード
+### 3. プログラム選択モード
 
-#### 2.1 セレクターの起動
+#### 3.1 セレクターの起動
 ```bash
 # selecter.pyを実行
 python selecter.py
 ```
 
-#### 2.2 操作方法
+#### 3.2 操作方法
 | 操作 | 機能 |
 |------|------|
 | **LEFTボタン** | 前のプログラムに切り替え |
@@ -852,7 +960,7 @@ python selecter.py
 | **フォースセンサー** | 選択したプログラムを実行 |
 | **ハブディスプレイ** | 現在のプログラム番号を表示 |
 
-#### 2.3 プログラムリストの確認
+#### 3.3 プログラムリストの確認
 ```python
 # selecter.py内のprogramsリスト
 programs = [
@@ -863,13 +971,13 @@ programs = [
 ]
 ```
 
-#### 2.4 新しいプログラムの追加
+#### 3.4 新しいプログラムの追加
 ```python
 # selecter.pyのprogramsリストに追加
 {"name": "カスタム動作", "module": run, "function": "custom_function", "params": [robot, hub, parameter]}
 ```
 
-#### 2.5 新しいファイルを作ってセレクターに登録する
+#### 3.5 新しいファイルを作ってセレクターに登録する
 
 新しい動作を別ファイルに切り出して管理したい場合の手順です。
 
@@ -939,7 +1047,7 @@ python selecter.py
 - **TypeError**: `params` の順番・個数が関数定義と一致しているか確認
 - **NameError**: `module` に指定したオブジェクト名（例: `my_actions`）を正しくインポートしているか確認
 
-#### 2.6 プログラムリストのフォーマット
+#### 3.6 プログラムリストのフォーマット
 
 `selecter.py` の `programs` は、以下の辞書要素のリストです。
 
@@ -971,7 +1079,7 @@ python selecter.py
 ```python
 {"name": "初期化のみ", "module": run, "description": "引数なし関数の例", "function": "init_only"}
 ```
-#### 2.7 登録される側のプログラムの書き方
+#### 3.7 登録される側のプログラムの書き方
 
 セレクターに登録する関数は「通常の同期関数」を想定しています。以下の指針に従って作成してください。
 
@@ -1020,9 +1128,9 @@ def lift_and_move(robot, lift_motor: Motor, up_deg: int, distance_mm: int, power
 - 長時間の無限ループなどは避け、1回の呼び出しで完了する処理にまとめる
 
 
-### 3. テスト実行
+### 4. テスト実行
 
-#### 3.1 直進・回転テスト
+#### 4.1 直進・回転テスト
 ```bash
 # straight_test.pyを実行
 python straight_test.py
@@ -1035,7 +1143,7 @@ python straight_test.py
 - 360度回転（出力10%）
 
 
-#### 3.2 精度テスト（straight_with_power / turn_with_power）
+#### 4.2 精度テスト（straight_with_power / turn_with_power）
 
 直進距離と回転角度の精度を測定するための簡易テストです。下記を新規ファイルとして保存して実行できます。
 
@@ -1099,9 +1207,9 @@ if __name__ == "__main__":
 
 
 
-### 4. 非同期処理の活用
+### 5. 非同期処理の活用
 
-#### 4.1 複数タスクの並行実行
+#### 5.1 複数タスクの並行実行
 ```python
 from pybricks.tools import multitask, run_task
 
@@ -1117,7 +1225,7 @@ run_task(multitask(
 ))
 ```
 
-#### 4.2 カスタム非同期関数の作成
+#### 5.2 カスタム非同期関数の作成
 ```python
 async def custom_sequence():
     """カスタム動作シーケンス"""
@@ -1141,9 +1249,9 @@ run_task(multitask(
 ))
 ```
 
-### 5. デバッグとトラブルシューティング
+### 6. デバッグとトラブルシューティング
 
-#### 5.1 ロボットの状態確認
+#### 6.1 ロボットの状態確認
 ```python
 def check_robot_status():
     """ロボットの状態を確認"""
@@ -1157,7 +1265,7 @@ def check_robot_status():
 check_robot_status()
 ```
 
-#### 5.2 エラーハンドリング
+#### 6.2 エラーハンドリング
 ```python
 def safe_robot_operation():
     """安全なロボット操作"""
