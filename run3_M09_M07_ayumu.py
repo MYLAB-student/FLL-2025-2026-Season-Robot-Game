@@ -21,6 +21,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    right_lift.run_angle(700, -500)
    await wait(1000)
    right_lift.run_angle(1000, 700)
+   
+   # ロボットを明示的に停止
+   robot.stop()
+   print("# 走行完了！")
+
     # === サンプル動作コード（参考例）===
     # 以下は基本的なロボット動作の例です。必要に応じてコメントアウトを解除して使用してください
     
@@ -61,22 +66,33 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 ##########################################
 
 
+# グローバル終了フラグ
+stop_logging = False
+
 async def sensor_logger_task():
     """
     センサー値を定期的にターミナルに表示する非同期タスク。
     他のタスク（ロボットの移動）と並行して実行されます。
     """
+    global stop_logging
     print("--- センサーログタスク開始 ---")
-    while True: # プログラムが終了するまで継続的にログを出力
+    while not stop_logging: # stop_loggingフラグがTrueになるまで継続
         heading = hub.imu.heading()
         left_deg = left_wheel.angle()
         right_deg = right_wheel.angle()
         dist = robot.distance()
         print(f"LOG: dist={dist:4.0f} mm  heading={heading:4.0f}°  L={left_deg:5.0f}°  R={right_deg:5.0f}°")
         await wait(200) # 100ミリ秒待機して、他のタスクに実行を譲る
+    
+    print("--- センサーログタスク終了 ---")
 
 async def main():
+    global stop_logging
     await run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift)
+    # main()が終了したらログタスクも終了させる
+    stop_logging = True
+    print("--- メインタスク完了、ログタスク終了中 ---")
+    await wait(500)  # ログタスクが終了するまで少し待つ
 
 if __name__=="__main__":
     hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
