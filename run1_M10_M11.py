@@ -11,8 +11,6 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 #######################################
     # ここにロボットの動作を記述してください
 
-    '''
-    '''
     
     # 速度・加速度設定を定義
     # 直進時の設定
@@ -33,60 +31,70 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
         'straight_acceleration': 800
     }
 
-    # 回転設定を適用
-    robot.settings(**turn_settings)
-    await robot.turn(-75)      #曲がる
 
-    # 直進設定を適用
-    robot.settings(**straight_settings)
-    await robot.straight(600)  #まっすぐすすむ   
+    '''
+    '''
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(-26)      #曲がる
+    await robot.turn(-45)       # 45度右回転
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(200)  #まっすぐすすむ   
+    await robot.straight(300)  # 300mm前進
 
-    # 右の車輪だけを動かして右に旋回する（20度）
-    await right_wheel.run_angle(300, -55)  # 右輪を後退させて右旋回（20度）
-    await wait(200)  # 少し待機（200ミリ秒）
-
-    # 直進設定を適用
-    robot.settings(**straight_settings)
-    await robot.straight(-160)  #まっすぐすすむ   
-    await wait(200)  # 少し待機（200ミリ秒）
-
-    # 左のリフトアームを回す
-    await left_lift.run_angle(1000, 360*15)  # 最大速度1000deg/s、5400度回転（15回転）
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(45)       # 45度右回転
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(30)  #まっすぐすすむ   
-    await wait(200)  # 少し待機（200ミリ秒）
+    await robot.straight(500)  # 500mm前進
 
-    await robot.straight(30)  #まっすぐすすむ   
-    await wait(200)  # 少し待機（200ミリ秒）
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(26)       # 26度右回転
 
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(330)  # 330mm前進
 
-    # 左の車輪だけを動かして右に旋回する（約83度）
-    await left_wheel.run_angle(300, 310)  # 左輪を前進させて右旋回（83度）
+    # 右アーム操作
+    await right_lift.run_angle(1000, 180*20)  # 右アーム操作(スピード, 角度) 
+
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(-130)  # 330mm前進
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(-26)       # 26度右回転
+
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(220)  # 150mm前進
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(-88)       # 85度左回転
 
     # ゆっくり進む設定を適用
-    robot.settings(straight_speed=150, straight_acceleration=200)
-    await robot.straight(150)  #ゆっくりまっすぐすすむ   
+    robot.settings(straight_speed=100, straight_acceleration=200)
+    await robot.straight(138)  # 140mm前進（低速）
 
-    # 直進設定を適用
-    robot.settings(straight_speed=150, straight_acceleration=200)
-    await robot.straight(-110)  #まっすぐすすむ   
+    robot.settings(straight_speed=100, straight_acceleration=200)
+    await robot.straight(-138)  # 140mm後進（低速）
 
-    # 左の車輪だけを動かして左に旋回する（80度）
-    await left_wheel.run_angle(150, -330)  # 左輪を後退させて左旋回（80度）
+    # ゆっくり回転する設定を適用
+    robot.settings(turn_rate=100, turn_acceleration=300)
+    await robot.turn(-80)       # 100度右回転（低速）
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(-800)  #まっすぐすすむ   
+    await robot.straight(-700)  # 800mm前進
+
+
+
 
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進

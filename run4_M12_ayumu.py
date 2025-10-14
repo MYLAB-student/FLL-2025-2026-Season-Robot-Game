@@ -35,10 +35,6 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     # ステップ4: スタート地点に向けて後退
     await robot.straight(-500)  # 450mm後退してベースに戻る 
     
-    # ロボットを明示的に停止
-    robot.stop()
-    print("# 走行完了！")
-
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進
     # await robot.turn(45)       # 45度右回転
@@ -63,6 +59,10 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     # await robot.turn(45)
 
 
+
+    # ロボットを明示的に停止
+    robot.stop()
+    print("# 走行完了！")
 
     pass  # 何も実行しない場合の構文エラー回避
     
