@@ -11,35 +11,109 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 #######################################
     # ここにロボットの動作を記述してください
 
+    # 速度・加速度設定を定義
+    # 直進時の設定
+    straight_settings = {
+        'straight_speed': 400,
+        'straight_acceleration': 500
+    }
+    
+    # 回転時の設定
+    turn_settings = {
+        'turn_rate': 240,
+        'turn_acceleration': 850
+    }
+    
+    # カーブ時の設定
+    curve_settings = {
+        'straight_speed': 240,
+        'straight_acceleration': 800
+    }
+
+
+    '''
     '''
 
+    # 直進設定を適用
+    robot.settings(**straight_settings)
     await robot.straight(650)  #M13に向けて前進   
 
+    # 回転設定を適用
+    robot.settings(**turn_settings)
     await robot.turn(90)       # 90度右回転
 
-    await robot.straight(250)  #M13に向けて前進   
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(260)  #M13に向けて前進   
 
-    await robot.turn(35)       # 45度右回転
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(40)       # 45度右回転
 
-    await robot.straight(150)  #M13に向けて前進   
-    await wait(200)                      # 0.2秒待機
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(140)  #M13に向けて前進   
+    await wait(100)                      # 0.2秒待機
+
+    await right_lift.run_angle(150, 260) # 右アーム操作（スピード, 角度）
+    await wait(300)                      # 0.2秒待機
+
+    await right_lift.run_angle(150, 90) # 右アーム操作（スピード, 角度）
+    await wait(400)                      # 0.2秒待機
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(-25)       # 20度左回転
+    await wait(500)                      # 0.2秒待機
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(30)       # 20度右回転
+
+    # 直進設定を適用
+    robot.settings(**straight_settings)
+    await robot.straight(-53)  #M13に向けて前進   
+
+    # await right_lift.run_angle(800, 360*2)  # 右アームを上げる
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(240)       # 20度左回転
+
+    await right_lift.run_angle(800, -350)  # 右アームを下げる
+
+    await robot.straight(48)  #M13に向けて前進   
+
+    await right_lift.run_angle(500, 360*3)  # 右アームを上げる
+    await wait(500)                      # 0.2秒待機
+
+    await right_lift.run_angle(800, -50)  # 右アームを下げる
+
+    # 回転設定を適用
+    robot.settings(**turn_settings)
+    await robot.turn(-100)       # 20度右回転
+
+    robot.settings(**straight_settings)
+    await robot.straight(300)  #M13に向けて前進   
+
+    robot.settings(**turn_settings)
+    await robot.turn(-80)       # 20度右回転
+
+    robot.settings(**straight_settings)
+    await robot.straight(700)  #M13に向けて前進   
+
+    '''
+    await left_lift.run_angle(800, 360*3)        # 左アームを下げる（完了を待つ）
+    # この時点で両方の動作が完了している
     '''
 
-    await right_lift.run_angle(150, 285) # 右アーム操作（スピード, 角度）
-    await wait(200)                      # 0.2秒待機
-    
-    '''
-    await right_lift.run_angle(200, 100) # 右アーム操作（スピード, 角度）
-    await wait(200)                      # 0.2秒待機
 
-    await right_lift.run_angle(200, 100) # 右アーム操作（スピード, 角度）
-    await wait(200)                      # 0.2秒待機
+    # 【参考】方法2: multitaskを使った同時実行（よりわかりやすい）
+    # await multitask(
+    #     right_lift.run_angle(300, 360),   # 右アームを上げる
+    #     left_lift.run_angle(300, -360)    # 左アームを下げる
+    # )
 
-    await right_lift.run_angle(200, 130) # 右アーム操作（スピード, 角度）
-    await wait(200)                      # 0.2秒待機
-
-    await robot.turn(10)       # 45度右回転
-    '''
 
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進
