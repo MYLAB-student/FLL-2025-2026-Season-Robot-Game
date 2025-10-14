@@ -39,6 +39,10 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     await robot.turn(-70)      #曲がる
 
     await robot.straight(580)  #まっすぐすすむ
+    
+    # ロボットを明示的に停止
+    robot.stop()
+    print("# 走行完了！")
 
 
 
@@ -73,11 +77,15 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
 
 
+# グローバル終了フラグ
+stop_logging = False
+
 async def sensor_logger_task():
     """
     センサー値を定期的にターミナルに表示する非同期タスク。
     他のタスク（ロボットの移動）と並行して実行されます。
     """
+    global stop_logging
     print("--- センサーログタスク開始 ---")
     # 経過時間測定用のタイマーを開始
     logger_timer = StopWatch()
@@ -86,7 +94,7 @@ async def sensor_logger_task():
     # ヘッダーを一度だけ表示
     print("time,current_dist_mm,error_angle_deg,current_heading_deg,left_angle_deg,right_angle_deg,angle_diff_deg,left_speed_dps,right_speed_dps,speed_diff_dps,kp_dist,ki_dist,kd_dist,kp_head,ki_head,kd_head")
 
-    while True: # プログラムが終了するまで継続的にログを出力
+    while not stop_logging: # stop_loggingフラグがTrueになるまで継続
         elapsed_time = logger_timer.time()
 
         # 基本センサー値
@@ -117,9 +125,16 @@ async def sensor_logger_task():
         print(f"{elapsed_time:.0f},{current_dist_mm:.1f},{error_angle_deg:.1f},{current_heading_deg:.1f},{left_angle_deg:.1f},{right_angle_deg:.1f},{angle_diff_deg:.1f},{left_speed_dps:.1f},{right_speed_dps:.1f},{speed_diff_dps:.1f},{kp_dist:.1f},{ki_dist:.1f},{kd_dist:.1f},{kp_head:.1f},{ki_head:.1f},{kd_head:.1f}")
 
         await wait(200) # 200ミリ秒待機して、他のタスクに実行を譲る
+    
+    print("--- センサーログタスク終了 ---")
 
 async def main():
+    global stop_logging
     await run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift)
+    # main()が終了したらログタスクも終了させる
+    stop_logging = True
+    print("--- メインタスク完了、ログタスク終了中 ---")
+    await wait(500)  # ログタスクが終了するまで少し待つ
 
 if __name__=="__main__":
     hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
