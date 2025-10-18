@@ -20,7 +20,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    await wait(500)
    right_lift.run_angle(700, -500)
    await wait(1000)
-   right_lift.run_angle(1000, 700)
+   right_lift.run_angle(1000, 750)
    
    # ロボットを明示的に停止
    robot.stop()

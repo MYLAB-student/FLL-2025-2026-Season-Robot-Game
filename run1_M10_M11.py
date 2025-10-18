@@ -60,7 +60,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     await robot.straight(330)  # 330mm前進
 
     # 右アーム操作
-    await right_lift.run_angle(1000, 180*20)  # 右アーム操作(スピード, 角度) 
+    await right_lift.run_angle(1000, 180*100)  # 右アーム操作(スピード, 角度) 
 
     # 直進設定を適用
     robot.settings(**straight_settings)
@@ -85,13 +85,14 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     robot.settings(straight_speed=100, straight_acceleration=200)
     await robot.straight(-138)  # 140mm後進（低速）
 
-    # ゆっくり回転する設定を適用
-    robot.settings(turn_rate=100, turn_acceleration=300)
-    await robot.turn(-80)       # 100度右回転（低速）
+    # 帰還場所を変更を青から赤に移動するため、一時コメントアウト
+    # # ゆっくり回転する設定を適用
+    # robot.settings(turn_rate=100, turn_acceleration=300)
+    # await robot.turn(-80)       # 100度右回転（低速）
 
-    # 直進設定を適用
-    robot.settings(**straight_settings)
-    await robot.straight(-700)  # 800mm前進
+    # # 直進設定を適用
+    # robot.settings(**straight_settings)
+    # await robot.straight(700)  # 800mm前進
 
 
 
