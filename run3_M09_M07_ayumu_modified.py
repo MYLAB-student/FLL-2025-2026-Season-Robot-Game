@@ -16,32 +16,39 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.curve(120, -66)   #半径120mmで-90度カーブ
 
-   robot.settings(straight_speed=150)
+   robot.settings(straight_speed=150)   #M009に向けて前進
    await robot.straight(210)
 
    await robot.straight(-179)
 
-   await robot.curve(800, 8)   #半径600mmで130度カーブ
+   await robot.curve(4000, -2.5)   #半径3000mmで-3度カーブ
 
+   robot.settings(turn_rate=40)  # ターンの速度を遅くする（デフォルトより遅い）
    await robot.turn(-30)
 
-   await robot.turn(80)
+   await wait(500)  # 1秒待機
 
-   await robot.straight(300)
+   await robot.straight(-50)
 
-   await right_lift.run_angle(300, -800)  # 速度200で360度回転
+   await robot.turn(100)
+
+   await robot.straight(270)
+
+   await right_lift.run_angle(300, -850)  # 速度200で360度回転
 
    await robot.straight(50)
+
+   # await robot.straight(100)
 
    # 右のアームを上げる
    await right_lift.run_angle(300, 360)  # 速度200で360度回転
 
    await robot.straight(-250)
 
-   await robot.turn(-45)
+   await robot.turn(-35)
 
 
-   await robot.curve(-1000, 35)
+   await robot.curve(-1500, 45)
 
 
    # ロボットを明示的に停止
