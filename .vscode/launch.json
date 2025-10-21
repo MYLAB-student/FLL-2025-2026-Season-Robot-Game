@@ -10,7 +10,7 @@
             // 使用するロボットに合わせて変更してください
             // Pの場合: "args": ["run", "ble", "${file}","--name","Pybricks Hub"],
             // P2の場合: "args": ["run", "ble", "${file}","--name","Pybricks Hub2"],
-            "args": ["run", "ble", "${file}","--name","Pybricks Hub"],
+            "args": ["run", "ble", "${file}","--name","Pybricks Hub2"],
         }
     ]
 }
