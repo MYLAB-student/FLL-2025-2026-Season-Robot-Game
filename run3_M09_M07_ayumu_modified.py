@@ -21,35 +21,49 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.straight(-179)
 
-   await robot.curve(4000, -2.5)   #半径3000mmで-3度カーブ
+   await robot.curve(700, 10)
 
-   robot.settings(turn_rate=40)  # ターンの速度を遅くする（デフォルトより遅い）
-   await robot.turn(-30)
+   await wait(100)  # 1秒待機
 
-   await wait(500)  # 1秒待機
+   # 右のタイヤだけを回して回転
+   await right_wheel.run_angle(100, 200)   # 速度100で50度回転
 
-   await robot.straight(-50)
+   await wait(300)  # 1秒待機
 
-   await robot.turn(100)
+   # robot.settings(turn_rate=40)  # ターンの速度を遅くする（デフォルトより遅い）
+   # await robot.turn(-30)
 
-   await robot.straight(270)
+   # await wait(300)  # 1秒待機
+
+   await robot.straight(-210)
+
+   await robot.turn(70)
+
+   await robot.straight(290)
+
+   await robot.turn(50)
+
+   await robot.straight(80)
 
    await right_lift.run_angle(300, -850)  # 速度200で360度回転
 
-   await robot.straight(50)
+   await robot.straight(100)
 
    # await robot.straight(100)
 
    # 右のアームを上げる
-   await right_lift.run_angle(300, 360)  # 速度200で360度回転
+   await right_lift.run_angle(300, 400)  # 速度200で360度回転
 
    await robot.straight(-250)
 
    await robot.turn(-35)
 
 
-   await robot.curve(-1500, 45)
+   await robot.curve(-700, 45)
 
+   '''
+   '''
+   
 
    # ロボットを明示的に停止
    robot.stop()
