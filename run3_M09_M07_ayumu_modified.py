@@ -11,38 +11,43 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    '''
    '''
 
-
    # ここにロボットの動作を記述してください
+
+   #M09
    await robot.curve(120, 110)   #半径120mmで90度カーブ M09に向けて方向転換
 
-   await robot.curve(120, -66)   #半径120mmで-90度カーブ M09に向けて方向転換
+   await robot.curve(120, -64)   #半径120mmで-90度カーブ M09に向けて方向転換
 
-   robot.settings(straight_speed=150)   #M009に向けて前進
-   await robot.straight(210)
+   robot.settings(straight_speed=120)   #M009に向けて前進
+   await robot.straight(205)
 
-   await robot.straight(-179)   #M09の台を引っ張って後進
+   await robot.straight(-180)   #M09の台を引っ張って後進
 
-   await robot.curve(800, 9.3)  #M09に向けて前進
+   await wait(200)  # 1秒待機
 
-   await wait(100)  # 1秒待機
+   await robot.curve(800, 8.5)  #M09に向けて前進
+
+   await wait(150)  # 1秒待機
 
    # 右のタイヤだけを回して回転
    await right_wheel.run_angle(100, 170)   # 速度100で50度回転 M09の下の台を回転して上げる
 
    await wait(300)  # 1秒待機
 
+
+   #M07
    await robot.straight(-210)  #後進でM09から離れる
 
-   await robot.turn(50) #M07へ向けて方向転換
+   await robot.turn(45) #M07へ向けて方向転換
 
-   await robot.straight(290) #M07に向けて前進
+   await robot.straight(200) #M07に向けて前進
 
-   await robot.turn(70) #M07に向けて方向転換
+   await robot.turn(64) #M07に向けて方向転換
 
-   await robot.straight(80) #M07に向けて前進
+   await robot.straight(160) #M07に向けて前進
 
 
-   await right_lift.run_angle(1000, -770)  # 速度200で360度回転 右リフトでM07の下の台を上げる
+   await right_lift.run_angle(1000, -810)  # 速度200で360度回転 右リフトでM07の下の台を上げる
 
    await robot.straight(50)
 
@@ -51,17 +56,21 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    # 右のアームを上げる
    await right_lift.run_angle(800, 720)  # 速度200で360度回転
 
-   await robot.curve(-200, -90)
+   await robot.straight(-210)
 
-   # await robot.straight(-220)
+   await robot.turn(-55)
 
-   # await robot.turn(-60)
+   await robot.curve(-1000, 40)
+
+
+   '''
+   await robot.curve(-230, -80)
+
+
 
    # await robot.straight(-300)
 
-   # await robot.curve(-500, 45)
 
-   '''
    '''
    
 
