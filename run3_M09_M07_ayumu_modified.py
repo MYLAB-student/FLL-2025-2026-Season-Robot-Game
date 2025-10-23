@@ -11,6 +11,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    '''
    '''
 
+
    # ここにロボットの動作を記述してください
    await robot.curve(120, 110)   #半径120mmで90度カーブ M09に向けて方向転換
 
@@ -32,29 +33,33 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.straight(-210)  #後進でM09から離れる
 
-   await robot.turn(55) #M07へ向けて方向転換
+   await robot.turn(50) #M07へ向けて方向転換
 
    await robot.straight(290) #M07に向けて前進
 
-   await robot.turn(65) #M07に向けて方向転換
+   await robot.turn(70) #M07に向けて方向転換
 
    await robot.straight(80) #M07に向けて前進
 
-   await right_lift.run_angle(300, -850)  # 速度200で360度回転 右リフトでM07の下の台を上げる
+
+   await right_lift.run_angle(1000, -770)  # 速度200で360度回転 右リフトでM07の下の台を上げる
 
    await robot.straight(50)
 
    # await robot.straight(100)
 
    # 右のアームを上げる
-   await right_lift.run_angle(300, 400)  # 速度200で360度回転
+   await right_lift.run_angle(800, 720)  # 速度200で360度回転
 
-   await robot.straight(-180)
+   await robot.curve(-200, -90)
 
-   await robot.turn(-35)
+   # await robot.straight(-220)
 
+   # await robot.turn(-60)
 
-   await robot.curve(-700, 45)
+   # await robot.straight(-300)
+
+   # await robot.curve(-500, 45)
 
    '''
    '''
