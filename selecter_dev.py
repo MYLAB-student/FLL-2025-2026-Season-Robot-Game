@@ -4,9 +4,12 @@ from pybricks.pupdevices import Motor, ForceSensor
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait, multitask, run_task, StopWatch
 from setup import initialize_robot
-import run
-import run1
-import run_sample
+import run4_M12_ayumu
+import run1_M01_M02_kanna
+import run1_M13_M03
+import run1_M10_M11
+import run1_M08_M06_M05
+import run3_M09_M07_ayumu_modified
 
 dev=False
 
@@ -14,11 +17,15 @@ dev=False
 hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
 
 # プログラムリスト
-programs = [
-
-     {"name": "run1", "module": run1, "description": "run1関数", "function": "run1", },
-     {"name": "run1", "module": run_sample, "description": "run1関数", "function": "run1" ,}
+programs = [     
+    {"name": "run1", "module": run1_M01_M02_kanna, "description": "run1関数", "function": "run", "display_number": 1},
+    {"name": "run1", "module": run4_M12_ayumu, "description": "run1関数", "function": "run", "display_number": 2},
+    {"name": "run1", "module": run1_M13_M03, "description": "run1関数", "function": "run", "display_number": 3},
+    {"name": "run1", "module": run1_M10_M11, "description": "run1関数", "function": "run", "display_number": 4},
+    {"name": "run1", "module": run1_M08_M06_M05, "description": "run1関数", "function": "run", "display_number": 5},
+    {"name": "run1", "module": run3_M09_M07_ayumu_modified, "description": "run1関数", "function": "run", "display_number": 6},
     # 他のプログラムをここに追加
+    # display_number を指定すると、hubにその番号が表示されます
 ]
 
 
@@ -65,7 +72,9 @@ async def selecter_task():
     while True:
         # 現在のプログラムIDを表示
         current_program = programs[program_id]
-        hub.display.number(program_id)
+        # display_numberが指定されていればそれを使用、なければprogram_idを使用
+        display_num = current_program.get('display_number', program_id)
+        hub.display.char(str(display_num))
 
 
         # ボタン入力の処理

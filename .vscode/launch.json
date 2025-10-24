@@ -12,5 +12,5 @@
             // P2の場合: "args": ["run", "ble", "${file}","--name","Pybricks Hub2"],
             "args": ["run", "ble", "${file}","--name","Pybricks Hub"],
         }
-    ]
+    ] 
 }

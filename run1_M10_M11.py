@@ -87,12 +87,12 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 帰還場所を変更を青から赤に移動するため、一時コメントアウト
     # # ゆっくり回転する設定を適用
-    # robot.settings(turn_rate=100, turn_acceleration=300)
-    # await robot.turn(-80)       # 100度右回転（低速）
+    robot.settings(turn_rate=100, turn_acceleration=300)
+    await robot.turn(-80)       # 100度右回転（低速）
 
     # # 直進設定を適用
-    # robot.settings(**straight_settings)
-    # await robot.straight(700)  # 800mm前進
+    robot.settings(**straight_settings)
+    await robot.straight(-700)  # 800mm前進
 
 
 
