@@ -8,7 +8,7 @@ import run4_M12_ayumu
 import run1_M01_M02_kanna
 import run1_M13_M03
 import run1_M10_M11
-import run1_M08_M06_M05
+import run1_m08_M06_M05_new
 import run3_M09_M07_ayumu_modified
 
 dev=False
@@ -16,15 +16,14 @@ dev=False
 # ロボットの初期化
 hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
 
-# プログラムリスト
-programs = [     
-    {"name": "run1", "module": run1_M01_M02_kanna, "description": "run1関数", "function": "run", "display_number": 1},
-    {"name": "run1", "module": run4_M12_ayumu, "description": "run1関数", "function": "run", "display_number": 2},
-    {"name": "run1", "module": run1_M13_M03, "description": "run1関数", "function": "run", "display_number": 3},
-    {"name": "run1", "module": run1_M10_M11, "description": "run1関数", "function": "run", "display_number": 4},
-    {"name": "run1", "module": run1_M08_M06_M05, "description": "run1関数", "function": "run", "display_number": 5},
-    {"name": "run1", "module": run3_M09_M07_ayumu_modified, "description": "run1関数", "function": "run", "display_number": 6},
-    # 他のプログラムをここに追加
+# プログラムリスト(ランの順番にする)
+programs = [
+    {"name": "run1", "module": run1_m08_M06_M05_new, "description": "run1関数", "function": "run", "display_number": 1},
+    {"name": "run1", "module": run3_M09_M07_ayumu_modified, "description": "run1関数", "function": "run", "display_number": 2},
+    {"name": "run1", "module": run1_M10_M11, "description": "run1関数", "function": "run", "display_number": 3},
+    {"name": "run1", "module": run4_M12_ayumu, "description": "run1関数", "function": "run", "display_number": 4},
+    {"name": "run1", "module": run1_M01_M02_kanna, "description": "run1関数", "function": "run", "display_number": 5},
+    {"name": "run1", "module": run1_M13_M03, "description": "run1関数", "function": "run", "display_number": 6},
     # display_number を指定すると、hubにその番号が表示されます
 ]
 
