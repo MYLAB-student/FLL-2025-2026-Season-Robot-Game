@@ -33,7 +33,7 @@
 ```
 名称未設定フォルダ/
 ├── README.md              # このファイル
-├── selecter.py           # プログラム選択・実行インターフェース
+├── selector.py           # プログラム選択・実行インターフェース
     ├── setup.py              # ロボット初期化モジュール
     ├── run1.py                # ランごとに作る実行ファイル
     ├── run2.py                
@@ -188,11 +188,11 @@ async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
    python mission01（Claude-3.5-Sonnet）.py
    ```
 
-#### 3. selecter_dev.pyへの登録
+#### 3. selector_dev.pyへの登録
 
 1. **インポート文の追加**
    ```python
-   # selecter_dev.py の先頭付近に追加
+   # selector_dev.py の先頭付近に追加
    import run
    import run1
    import run_sample
@@ -201,7 +201,7 @@ async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
 
 2. **programsリストへの追加**
    ```python
-   # selecter_dev.py のprogramsリストに新しいエントリを追加
+   # selector_dev.py のprogramsリストに新しいエントリを追加
    programs = [
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
@@ -213,12 +213,12 @@ async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
    ]
    ```
 
-#### 4. selecter_dev.pyでのテスト実行
+#### 4. selector_dev.pyでのテスト実行
 
 1. **開発モードでの実行**
    ```bash
-   # selecter_dev.py を実行（センサーログ有効）
-   python selecter_dev.py
+   # selector_dev.py を実行（センサーログ有効）
+   python selector_dev.py
    ```
 
 2. **操作方法**
@@ -228,7 +228,7 @@ async def run(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
 
 3. **デバッグ機能**
    ```python
-   # selecter_dev.py の11行目でログの有効/無効を切り替え
+   # selector_dev.py の11行目でログの有効/無効を切り替え
    dev = True   # センサーログ表示
    dev = False  # センサーログ非表示（高速実行）
    ```
@@ -266,20 +266,20 @@ spec.loader.exec_module(mission01)
      ↓
 3. 単体で動作テスト（python mission●.py）
      ↓
-4. selecter_dev.py にインポート・登録
+4. selector_dev.py にインポート・登録
      ↓
 5. セレクターでの動作確認（dev=True）
      ↓
-6. 問題なければ selecter.py にも登録
+6. 問題なければ selector.py にも登録
      ↓
-7. 競技用として selecter.py をハブに書き込み
+7. 競技用として selector.py をハブに書き込み
 ```
 
-#### 7. run_template.pyとselecter_dev.pyの連携メリット
+#### 7. run_template.pyとselector_dev.pyの連携メリット
 
 - **効率的な開発**: テンプレートで基本構造を素早く作成
 - **統一された形式**: 全てのミッションファイルが同じ構造
-- **デバッグ支援**: selecter_dev.pyのセンサーログで動作確認
+- **デバッグ支援**: selector_dev.pyのセンサーログで動作確認
 - **段階的テスト**: 単体テスト → セレクター統合テスト
 - **簡単な切り替え**: ボタン操作で複数ミッションを素早く実行
 
@@ -544,7 +544,7 @@ def mission_complete_example(hub, robot, left_wheel, right_wheel, left_lift, rig
 
 1. **新しいrunファイルのインポート**
    ```python
-   # selecter.pyの上部にインポート文を追加
+   # selector.pyの上部にインポート文を追加
    import run
    import run1
    import run2  # 新しく追加
@@ -552,7 +552,7 @@ def mission_complete_example(hub, robot, left_wheel, right_wheel, left_lift, rig
 
 2. **programsリストへの追加**
    ```python
-   # selecter.pyのprogramsリストに新しいエントリを追加
+   # selector.pyのprogramsリストに新しいエントリを追加
    programs = [
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 50]},
        {"name": "straight_with_power", "module": run, "description": "straight_with_power関数", "function": "straight_with_power", "params": [robot,100, 10]},
@@ -638,18 +638,18 @@ def mission_complete_example(hub, robot, left_wheel, right_wheel, left_lift, rig
    ```
 
 4. **動作確認**
-   - selecter.pyを実行してプログラムリストに表示されることを確認
+   - selector.pyを実行してプログラムリストに表示されることを確認
    - ハブのボタンで選択し、フォースセンサーで実行テスト
 
 5. **ハブへの書き込み**
-   - Pybricks Appからselecter.pyをメインとしてハブにダウンロード
+   - Pybricks Appからselector.pyをメインとしてハブにダウンロード
    - オフライン実行が可能になる
 
 ### 注意点とベストプラクティス
 
 #### runファイルの関数引数について
 
-**重要**: runファイルの関数は、selecter.pyで初期化されたロボットオブジェクトを受け取る形式にする必要があります。
+**重要**: runファイルの関数は、selector.pyで初期化されたロボットオブジェクトを受け取る形式にする必要があります。
 
 **関数シグネチャの標準形式**:
 ```python
@@ -713,7 +713,7 @@ def run3(hub, robot, left_wheel, right_wheel, left_lift, right_lift):
     robot.straight(100)
 ```
 
-**selecter.pyでの対応する登録例**:
+**selector.pyでの対応する登録例**:
 ```python
 programs = [
     # 既存のエントリ...
@@ -723,7 +723,7 @@ programs = [
 ```
 
 #### その他の注意点
-- インポート順序はselecter.pyで参照する順番に合わせる
+- インポート順序はselector.pyで参照する順番に合わせる
 - プログラム名は重複しないよう注意する
 - 関数内で`wait()`を適宜使用してロボットの安定動作を確保する
 - エラーが発生しやすい動作の前後には`robot.stop()`を入れることを推奨
@@ -748,7 +748,7 @@ hubのメインボタンを長押しして起動し、実行するファイル�
 - RIGHT: 次のプログラム
 - フォースセンサー（C）: 選択したプログラムを実行
 
-4) 最短でミッションを1件登録（`selecter.py` の `programs` に追記）
+4) 最短でミッションを1件登録（`selector.py` の `programs` に追記）
 
 ```python
 {"name": "M01 直進100mm(50%)", "module": run, "description": "M01 直進テスト", "function": "straight_with_power", "params": [robot, 100, 50]}
@@ -768,7 +768,7 @@ def m01_bridge(robot, hub):
     wait(200)
 ```
 
-- `selecter.py` にインポートして登録
+- `selector.py` にインポートして登録
 
 ```python
 import missions_gemini_2_5_pro
@@ -785,7 +785,7 @@ programs += [
 - 括弧入りファイル名は通常の `import` ができないため、必要なら本文の `importlib` 例を利用
 
 7) 書き込み後は本体のみで動作します（オフライン実行）
-- Pybricks App から `selecter.py` をメインとしてハブに「ダウンロード（保存）」してください
+- Pybricks App から `selector.py` をメインとしてハブに「ダウンロード（保存）」してください
 - 以後は PC 接続なしで、ハブの電源を入れて中央ボタンからプログラムを起動できます
 - 本プロジェクトのセレクターは、ハブの左右ボタン／フォースセンサーで選択・実行できます
 
@@ -900,7 +900,7 @@ Port C: フォースセンサー（プログラム選択用）
    - Bluetoothが有効になっていることを確認
 
 2. **Cursorでファイルを開く**
-   - 実行したいPythonファイル（例: `run1.py`、`selecter.py`など）を開く
+   - 実行したいPythonファイル（例: `run1.py`、`selector.py`など）を開く
 
 3. **プログラムの実行**
    - `F5`キーを押す（macOSでも`F5`）
@@ -951,8 +951,8 @@ hub, left, right, robot = initialize_robot(
 
 #### 3.1 セレクターの起動
 ```bash
-# selecter.pyを実行
-python selecter.py
+# selector.pyを実行
+python selector.py
 ```
 
 #### 3.2 操作方法
@@ -965,7 +965,7 @@ python selecter.py
 
 #### 3.3 プログラムリストの確認
 ```python
-# selecter.py内のprogramsリスト
+# selector.py内のprogramsリスト
 programs = [
     {"name": "直進テスト", "module": run, "function": "straight_with_power", "params": [robot, 100, 50]},
     {"name": "低速直進", "module": run, "function": "straight_with_power", "params": [robot, 100, 10]},
@@ -976,7 +976,7 @@ programs = [
 
 #### 3.4 新しいプログラムの追加
 ```python
-# selecter.pyのprogramsリストに追加
+# selector.pyのprogramsリストに追加
 {"name": "カスタム動作", "module": run, "function": "custom_function", "params": [robot, hub, parameter]}
 ```
 
@@ -1007,7 +1007,7 @@ def turn_and_go(robot, hub, angle_deg: int, distance_mm: int, motor_power: int):
     robot.straight(distance_mm)
 ```
 
-2) `selecter.py` に新ファイルをインポート
+2) `selector.py` に新ファイルをインポート
 
 ```python
 # ファイル先頭付近に追記
@@ -1029,7 +1029,7 @@ sys.modules["my_actions"] = my_actions
 spec.loader.exec_module(my_actions)
 ```
 
-3) `selecter.py` の `programs` リストに登録
+3) `selector.py` の `programs` リストに登録
 
 ```python
 programs = [
@@ -1042,7 +1042,7 @@ programs = [
 4) 実行して確認
 
 ```bash
-python selecter.py
+python selector.py
 ```
 
 5) うまくいかない場合
@@ -1052,7 +1052,7 @@ python selecter.py
 
 #### 3.6 プログラムリストのフォーマット
 
-`selecter.py` の `programs` は、以下の辞書要素のリストです。
+`selector.py` の `programs` は、以下の辞書要素のリストです。
 
 ```python
 # programs リストの各要素フォーマット（必須/任意）
@@ -1066,7 +1066,7 @@ python selecter.py
 ```
 
 - **必須キー**: `name`, `module`, `description`, `function`
-  - `description` は `selecter.py` の出力で必ず参照されるため省略不可
+  - `description` は `selector.py` の出力で必ず参照されるため省略不可
 - **任意キー**: `params`
   - 省略した場合は、引数なしで関数が呼ばれます
   - 多くの関数は `robot` や `hub` を必要とするため、通常は指定します
@@ -1118,7 +1118,7 @@ def lift_and_move(robot, lift_motor: Motor, up_deg: int, distance_mm: int, power
     robot.straight(distance_mm)
 ```
 
-登録例（`selecter.py` の `programs`）
+登録例（`selector.py` の `programs`）
 
 ```python
 {"name": "進む→回る", "module": my_actions, "description": "直進後に回転", "function": "go_and_turn", "params": [robot, hub, 150, 90, 40]}
@@ -1127,7 +1127,7 @@ def lift_and_move(robot, lift_motor: Motor, up_deg: int, distance_mm: int, power
 
 注意点
 - `wait()` を適宜入れて機体保護と安定動作を確保
-- `selecter.py` 側で実行前後に `reset_robot()` が呼ばれる前提のため、関数内で再初期化しない
+- `selector.py` 側で実行前後に `reset_robot()` が呼ばれる前提のため、関数内で再初期化しない
 - 長時間の無限ループなどは避け、1回の呼び出しで完了する処理にまとめる
 
 
@@ -1334,32 +1334,32 @@ LOG: dist= 150 mm  heading=  45°  L=  180°  R=  180°
 
 | ファイル | ログ機能 | 用途 |
 |---------|---------|------|
-| `selecter.py` | **なし** | 競技本番用（高速実行） |
-| `selecter_dev.py` | **切り替え可能** | 開発・デバッグ用 |
+| `selector.py` | **なし** | 競技本番用（高速実行） |
+| `selector_dev.py` | **切り替え可能** | 開発・デバッグ用 |
 | `straight_test.py` | **常時有効** | テスト・調整用 |
 
-#### selecter_dev.pyでのログ切り替え
+#### selector_dev.pyでのログ切り替え
 
 **ログ有効にする場合:**
 ```python
-# selecter_dev.py の11行目を編集
+# selector_dev.py の11行目を編集
 dev = True  # ログを表示
 
 # 実行時の動作
 run_task(multitask(
     sensor_logger_task(),  # センサーログタスクを並行実行
-    selecter_task()        # プログラム選択タスク
+    selector_task()        # プログラム選択タスク
 ))
 ```
 
 **ログ無効にする場合:**
 ```python
-# selecter_dev.py の11行目を編集
+# selector_dev.py の11行目を編集
 dev = False  # ログを非表示
 
 # 実行時の動作
 run_task(multitask(
-    selecter_task()        # プログラム選択タスクのみ実行
+    selector_task()        # プログラム選択タスクのみ実行
 ))
 ```
 
@@ -1377,12 +1377,12 @@ LOG: dist= 180 mm  heading=  48°  L=  210°  R=  210°
 #### 使用場面別の推奨設定
 
 **🔧 開発・デバッグ時:**
-- `selecter_dev.py`を使用
+- `selector_dev.py`を使用
 - `dev = True`に設定
 - センサー値をリアルタイムで確認しながら調整
 
 **🏁 競技本番時:**
-- `selecter.py`を使用
+- `selector.py`を使用
 - ログオーバーヘッドなしで最高性能を発揮
 
 **🧪 精度テスト時:**
@@ -1413,7 +1413,7 @@ def custom_action(robot, parameter):
 
 ### プログラムリストへの追加
 ```python
-# selecter.pyのprogramsリストに追加
+# selector.pyのprogramsリストに追加
 {"name": "カスタム動作", "module": run, "function": "custom_action", "params": [robot, parameter]}
 ```
 
