@@ -63,9 +63,12 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    # 左側にいくバージョン
    robot.settings(straight_speed=200)
-   await robot.straight(-490)
-   await robot.turn(90)
-
+   await robot.straight(-520)
+   await robot.turn(60)
+   robot.settings(straight_speed=400)  # スピードを400mm/sに上げる
+   await robot.straight(-800)
+   await robot.turn(-20)
+   await robot.straight(-650)
    '''
    await robot.curve(-230, -80)
 

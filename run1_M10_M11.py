@@ -35,9 +35,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     '''
     '''
 
+    #M11
+
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(-45)       # 45度右回転
+    await robot.turn(-45)       # 左に45度向きを変更
 
     # 直進設定を適用
     robot.settings(**straight_settings)
@@ -45,7 +47,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(45)       # 45度右回転
+    await robot.turn(45)       # 右に45度向きを変更
 
     # 直進設定を適用
     robot.settings(**straight_settings)
@@ -53,53 +55,54 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(26)       # 26度右回転
+    await robot.turn(26)       # 右に26度向きを変更
 
     # 直進設定を適用
     robot.settings(**straight_settings)
     await robot.straight(330)  # 330mm前進
 
-    # 右アーム操作
+    # M11_遺物の持ち上げ(右アーム操作)
     await right_lift.run_angle(1000, 180*100)  # 右アーム操作(スピード, 角度) 
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(-130)  # 330mm前進
+    await robot.straight(-130)  # 130mm後進
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(-26)       # 26度右回転
+    await robot.turn(-26)       # 左に26度向きを変更
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(220)  # 150mm前進
+    await robot.straight(220)  # 220mm前進
 
+    # M10開始
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(-88)       # 85度左回転
+    await robot.turn(-88)       # 左に88度向きを変更
 
     # ゆっくり進む設定を適用
     robot.settings(straight_speed=100, straight_acceleration=200)
-    await robot.straight(138)  # 140mm前進（低速）
+    await robot.straight(138)  # 138mm前進（低速）
 
     robot.settings(straight_speed=100, straight_acceleration=200)
-    await robot.straight(-138)  # 140mm後進（低速）
+    await robot.straight(-138)  # 138mm後進（低速）
 
     # 帰還場所を変更を青から赤に移動するため、一時コメントアウト
     # # ゆっくり回転する設定を適用
     robot.settings(turn_rate=100, turn_acceleration=300)
-    await robot.turn(-80)       # 100度右回転（低速）
+    await robot.turn(100)       # 右に100度向きを変更（低速）
 
     # # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(-700)  # 800mm前進
-
-
+    await robot.straight(-400)  # 400mm後進
+    await robot.turn(-30)
+    await robot.straight(-900)
 
 
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進
-    # await robot.turn(45)       # 45度右回転
+    # await robot.turn(45)       # 右に45度向きを変更
     
     # アームでブロックを掴む
     # await left_lift.run_angle(300, 180)  # 左アーム操作
@@ -108,7 +111,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     
     # ブロックを運搬
     # await robot.straight(-100)   # 100mm後退
-    # await robot.turn(-90)        # 90度左回転
+    # await robot.turn(-90)        # 左に90度向きを変更
     # await robot.straight(600)    # 600mm前進
     
     # ブロックを配置
