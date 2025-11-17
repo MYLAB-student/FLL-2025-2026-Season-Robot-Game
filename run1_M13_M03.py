@@ -44,27 +44,24 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(260)  #M13に向けて前進   
+    await robot.straight(262)  #M13に向けて前進   
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(40)       # 45度右回転
+    await robot.turn(39)       # 45度右回転
 
     # 直進設定を適用
     robot.settings(**straight_settings)
     await robot.straight(140)  #M13に向けて前進   
     await wait(100)                      # 0.2秒待機
 
-    await right_lift.run_angle(150, 260) # 右アーム操作（スピード, 角度）
+    await right_lift.run_angle(150, 380) # 右アーム操作（スピード, 角度）
     await wait(300)                      # 0.2秒待機
-
-    await right_lift.run_angle(150, 90) # 右アーム操作（スピード, 角度）
-    await wait(400)                      # 0.2秒待機
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(-25)       # 20度左回転
-    await wait(500)                      # 0.2秒待機
+    await robot.turn(-30)       # 20度左回転
+    await wait(700)                      # 0.2秒待機
 
     # 回転設定を適用
     robot.settings(**turn_settings)
@@ -72,7 +69,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(-53)  #M13に向けて前進   
+    await robot.straight(-48)  #M13に向けて前進   
 
     # await right_lift.run_angle(800, 360*2)  # 右アームを上げる
 
@@ -80,11 +77,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     robot.settings(**turn_settings)
     await robot.turn(240)       # 20度左回転
 
-    await right_lift.run_angle(800, -350)  # 右アームを下げる
+    await right_lift.run_angle(1000, -350)  # 右アームを下げる
 
     await robot.straight(48)  #M13に向けて前進   
 
-    await right_lift.run_angle(500, 360*3)  # 右アームを上げる
+    await right_lift.run_angle(1000, 360*3)  # 右アームを上げる
     await wait(500)                      # 0.2秒待機
 
     await right_lift.run_angle(800, -50)  # 右アームを下げる

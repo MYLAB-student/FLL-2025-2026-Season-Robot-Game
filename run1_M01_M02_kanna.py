@@ -24,7 +24,15 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     await robot.turn(-85)      #M02に向けて方向転換
 
-    await robot.straight(205)  #まっすぐすすむ
+    robot.straight(205, wait=False)  #まっすぐすすむ（非ブロッキング）
+    timeout = StopWatch()  # タイマーを作成
+    timeout.reset()  # タイマーをリセット
+    while timeout.time() < 3000:  # 3000ミリ秒（3秒）までループ
+        # 直進動作が完了したかチェック
+        if not robot.done():
+            await wait(10)  # まだ動作中の場合、10ミリ秒待機してから再チェック
+        else:
+            break
 
     await robot.straight(-210)  #まっすぐすすむ
 
