@@ -17,12 +17,23 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     print(">>> 実行: await robot.straight(450)")
     await robot.straight(450)
     
-    # 右アームを下げる（速度500、角度-1100度）
+    # 右アームを下げる（速度500、角度-360度）
     print(">>> 実行: await right_lift.run_angle(500,-1100)")
-    await right_lift.run_angle(500,-1100)
-    
+    await right_lift.run_angle(500,-360)
 
-    # M06
+    await wait(100)  # 0.1秒待機
+    
+    # 右アームを下げる（速度500、角度-360度）
+    print(">>> 実行: await right_lift.run_angle(500,-1100)")
+    await right_lift.run_angle(500,-360)
+
+    await wait(100)  # 0.1秒待機
+
+    # 右アームを下げる（速度500、角度-360度）
+    print(">>> 実行: await right_lift.run_angle(500,-1100)")
+    await right_lift.run_angle(500,-360)
+
+    await wait(50)  # 0.1秒待機    # M06
 
     # 微調整のため左に5度回転
     print(">>> 実行: await robot.turn(-5)")
@@ -35,12 +46,12 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # M05
 
-    await robot.turn(-45)
-    await robot.straight(30)
+    await robot.turn(-42)
+    await robot.straight(34)
 
     # 右の車輪だけを少し動かす（180度回転、タイムアウト1.5秒）
     print(">>> 実行: right_wheel.run_angle(200, 180) [タイムアウト1.5秒]")
-    right_wheel.run_angle(200, 180, wait=False)  # 非同期で回転開始
+    right_wheel.run_angle(200, 140, wait=False)  # 非同期で回転開始
     
     # 1.5秒待機、終わらなければ強制停止
     timeout = StopWatch()
@@ -62,7 +73,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 時計回りに60度回転
     print(">>> 実行: await robot.turn(45)")
-    await robot.turn(60)
+    await robot.turn(50)
 
     # 一時的に速度を100%に変更
     robot.settings(straight_speed=500)  # 500mm/s = 100%
