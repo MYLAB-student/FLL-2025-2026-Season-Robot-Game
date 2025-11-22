@@ -228,7 +228,7 @@ def reset_motor_angles(left_wheel, right_wheel, left_lift, right_lift):
     print("✓ モーター角度リセット完了: 全モーター=0°")
 
 # ===== ロボット全体を初期化する関数（メイン関数） =====
-def initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100):
+def initialize_robot(straight_speed_percent=60, turn_speed_percent=30, motor_power_percent=100):
     """
     ロボットを使う準備を全部まとめて行う関数
     

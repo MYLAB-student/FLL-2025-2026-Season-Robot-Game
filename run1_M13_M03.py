@@ -75,7 +75,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 回転設定を適用
     robot.settings(**turn_settings)
-    await robot.turn(240)       # 20度左回転
+    await robot.turn(245)       # 20度左回転
 
     await right_lift.run_angle(1000, -350)  # 右アームを下げる
 

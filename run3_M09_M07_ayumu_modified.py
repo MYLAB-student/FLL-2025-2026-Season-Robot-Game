@@ -19,7 +19,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    await robot.curve(120, -64)   #半径120mmで-90度カーブ M09に向けて方向転換
 
    robot.settings(straight_speed=220)   #M009に向けて前進
-   await robot.straight(200)
+   await robot.straight(220)
 
    await robot.straight(-187)   #M09の台を引っ張って後進
 
@@ -42,7 +42,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.straight(210) #M07に向けて前進
 
-   await robot.turn(65) #M07に向けて方向転換
+   await robot.turn(68) #M07に向けて方向転換
 
    await robot.straight(90) #M07に向けて前進
 
@@ -62,10 +62,10 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
 
    # 左側にいくバージョン
-   robot.settings(straight_speed=200)
-   await robot.straight(-520)
+   robot.settings(straight_speed=400)
+   await robot.straight(-550)
    await robot.turn(60)
-   robot.settings(straight_speed=400)  # スピードを400mm/sに上げる
+   robot.settings(straight_speed=600)  # スピードを400mm/sに上げる
    await robot.straight(-800)
    await robot.turn(-20)
    await robot.straight(-650)

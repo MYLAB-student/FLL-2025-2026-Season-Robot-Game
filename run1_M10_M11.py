@@ -62,7 +62,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     await robot.straight(330)  # 330mm前進
 
     # M11_遺物の持ち上げ(右アーム操作)
-    await right_lift.run_angle(1000, 180*100)  # 右アーム操作(スピード, 角度) 
+    await right_lift.run_angle(1000, 180*40)  # 右アーム操作(スピード, 角度) 
 
     # 直進設定を適用
     robot.settings(**straight_settings)
