@@ -11,6 +11,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    '''
    '''
 
+   # ラン2だけ、他のランとは異なり低速で動くようにする
+   # 直進速度: 800mm/s * 40% = 320mm/s
+   # 回転速度: 200deg/s * 30% = 60deg/s
+   robot.settings(straight_speed=320, turn_rate=60)
+
    # ここにロボットの動作を記述してください
 
    #M09
@@ -21,7 +26,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    robot.settings(straight_speed=220)   #M009に向けて前進
    await robot.straight(200)
 
-   await robot.straight(-187)   #M09の台を引っ張って後進
+   await robot.straight(-192)   #M09の台を引っ張って後進
 
    await wait(200)  # 1秒待機
 
@@ -42,7 +47,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.straight(210) #M07に向けて前進
 
-   await robot.turn(65) #M07に向けて方向転換
+   await robot.turn(68) #M07に向けて方向転換
 
    await robot.straight(90) #M07に向けて前進
 
@@ -62,10 +67,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
 
    # 左側にいくバージョン
-   robot.settings(straight_speed=200)
-   await robot.straight(-520)
-   await robot.turn(60)
-   robot.settings(straight_speed=400)  # スピードを400mm/sに上げる
+   robot.settings(straight_speed=400)
+   await robot.straight(-550)
+   await robot.turn(55)
+   robot.settings(straight_speed=600)  # スピードを600mm/sに上げる
+
    await robot.straight(-800)
    await robot.turn(-20)
    await robot.straight(-650)
@@ -154,7 +160,8 @@ async def main():
     await wait(500)  # ログタスクが終了するまで少し待つ
 
 if __name__=="__main__":
-    hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot()
+    # ラン2だけ、他のランとは異なり低速で動くようにする
+    hub ,robot, left_wheel, right_wheel,left_lift,right_lift = initialize_robot(straight_speed_percent=40, turn_speed_percent=30, motor_power_percent=100)
     run_task(multitask(
         sensor_logger_task(), 
         main()
