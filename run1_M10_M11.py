@@ -74,7 +74,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(220)  # 220mm前進
+    await robot.straight(225)  # 220mm前進
 
     # M10開始
     # 回転設定を適用
@@ -83,20 +83,29 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
     # ゆっくり進む設定を適用
     robot.settings(straight_speed=100, straight_acceleration=200)
-    await robot.straight(138)  # 138mm前進（低速）
+    # タイムアウト処理付き直進
+    robot.straight(148, wait=False)  # 142mm前進（低速・非同期）
+    timeout = StopWatch()
+    timeout.reset()
+    while timeout.time() < 2000:  # 2秒でタイムアウト
+        if not robot.done():
+            await wait(10)
+        else:
+            break
+    robot.stop()
 
     robot.settings(straight_speed=100, straight_acceleration=200)
-    await robot.straight(-138)  # 138mm後進（低速）
+    await robot.straight(-148)  # 142mm後進（低速）
 
     # 帰還場所を変更を青から赤に移動するため、一時コメントアウト
     # # ゆっくり回転する設定を適用
     robot.settings(turn_rate=100, turn_acceleration=300)
-    await robot.turn(100)       # 右に100度向きを変更（低速）
+    await robot.turn(106)       # 右に100度向きを変更（低速）
 
     # # 直進設定を適用
     robot.settings(**straight_settings)
-    await robot.straight(-400)  # 400mm後進
-    await robot.turn(-30)
+    await robot.straight(-430)  # 400mm後進
+    await robot.turn(-28)
     await robot.straight(-900)
 
 
