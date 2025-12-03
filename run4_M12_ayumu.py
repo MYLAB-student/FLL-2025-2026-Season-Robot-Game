@@ -18,12 +18,13 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     
     # ステップ3: カーブしながら前進（タイムアウト処理付き）
     # カーブ動作を開始（非同期）
+    robot.settings(straight_speed=200)  # スピードを遅く設定（デフォルトは約500mm/s）
     robot.curve(850, 25, then=Stop.COAST, wait=False)  # カーブ動作を非同期で開始
     
     # タイムアウト処理: 3秒以内に完了しなければ強制終了
     timeout = StopWatch()  # タイマーを作成
     timeout.reset()  # タイマーをリセット
-    while timeout.time() < 3000:  # 3000ミリ秒（3秒）までループ
+    while timeout.time() < 2000:  # 3000ミリ秒（3秒）までループ
         # カーブ動作が完了したかチェック
         if not robot.done():
             await wait(10)  # まだ動作中の場合、10ミリ秒待機してから再チェック
@@ -33,7 +34,8 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
     robot.stop()  # タイムアウトまたは完了後に停止
     
     # ステップ4: スタート地点に向けて後退
-    await robot.straight(-500)  # 450mm後退してベースに戻る 
+    robot.settings(straight_speed=350)  # スピードを設定（デフォルトは約500mm/s）
+    await robot.straight(-550)  # 450mm後退してベースに戻る 
     
     # 例: ブロイントまで移動
     # await robot.straight(400)  # 400mm前進

@@ -47,7 +47,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await robot.straight(210) #M07に向けて前進
 
-   await robot.turn(68) #M07に向けて方向転換
+   await robot.turn(65) #M07に向けて方向転換
 
    await robot.straight(90) #M07に向けて前進
 
@@ -69,11 +69,11 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
    # 左側にいくバージョン
    robot.settings(straight_speed=400)
    await robot.straight(-550)
-   await robot.turn(55)
+   await robot.turn(58)
    robot.settings(straight_speed=600)  # スピードを600mm/sに上げる
 
    await robot.straight(-800)
-   await robot.turn(-20)
+   await robot.turn(-22)
    await robot.straight(-650)
    '''
    await robot.curve(-230, -80)
