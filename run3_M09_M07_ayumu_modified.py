@@ -30,7 +30,7 @@ async def run(hub ,robot, left_wheel, right_wheel,left_lift,right_lift):
 
    await wait(200)  # 1秒待機
 
-   await robot.curve(800, 8.5)  #M09に向けて前進
+   await robot.curve(710, 10)  #M09に向けて前進
 
    await wait(150)  # 1秒待機
 
